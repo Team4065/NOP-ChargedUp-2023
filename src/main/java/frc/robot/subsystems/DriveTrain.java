@@ -6,15 +6,28 @@ package frc.robot.subsystems;
 
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.RamseteController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.trajectory.TrajectoryUtil;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RamseteCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+
+import java.io.IOException;
+import java.nio.file.Path;
 
 import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
@@ -36,23 +49,22 @@ public class DriveTrain extends SubsystemBase {
   RelativeEncoder leftEncoder = leftMotor.getEncoder();
 
   // Values for the distance function
-  PIDController moveMotorPID = new PIDController(0.5, 0, 0);
-  public double encoderRawVal;
-  public double encoderSetpoint;
+  // PIDController moveMotorPID = new PIDController(0.5, 0, 0);
+  // public double encoderRawVal;
+  // public double encoderSetpoint;
 
-  DifferentialDrive diffDrive = new DifferentialDrive(leftMotor, rightMotor);
-  public static AHRS g_gyro = new AHRS(SPI.Port.kMXP);
+  DifferentialDrive diffDrive;
+  public static Gyro g_gyro = new AHRS(SPI.Port.kMXP);
   private final DifferentialDriveOdometry m_odometry;
 
 
   /** Creates a new DriveTrain. */
   public DriveTrain() {
-    rightMotor.restoreFactoryDefaults();
-    leftMotor.restoreFactoryDefaults();
+    g_gyro.calibrate();
 
-    rightMotor.setInverted(true);
-    leftMotor.setInverted(false);
-    
+    rightMotor.setInverted(false);
+    leftMotor.setInverted(true);
+  
     rightEncoder.setPosition(0);
     leftEncoder.setPosition(0);
 
@@ -61,8 +73,46 @@ public class DriveTrain extends SubsystemBase {
     rightEncoder.setVelocityConversionFactor(Constants.AutoConstants.kConversionMeters / 60);
     leftEncoder.setVelocityConversionFactor(Constants.AutoConstants.kConversionMeters / 60);
 
+    diffDrive = new DifferentialDrive(leftMotor, rightMotor);
+
     m_odometry = new DifferentialDriveOdometry(g_gyro.getRotation2d(), leftEncoder.getPosition(), rightEncoder.getPosition());
     m_odometry.resetPosition(g_gyro.getRotation2d(), leftEncoder.getPosition(), rightEncoder.getPosition(), new Pose2d());
+  }
+
+  
+
+  @Override
+  public void periodic() {
+    // This method will be called once per scheduler run
+    m_odometry.update(g_gyro.getRotation2d(), leftEncoder.getPosition(), rightEncoder.getPosition());
+
+    SmartDashboard.putNumber("Left encoder values (Meters)", getLeftEncoderPosition());
+    SmartDashboard.putNumber("Right encoder values (Meters)", getRightEncoderPosition());
+    SmartDashboard.putNumber("Gyro heading", getHeading());
+  }
+
+  public void setLeft(double speed) {
+    leftMotor.set(speed);
+    SmartDashboard.putNumber("Left Drive", speed);
+
+  }
+
+  public void setRight(double speed) {
+    rightMotor.set(speed); 
+    SmartDashboard.putNumber("Right Drive", speed);
+
+  }
+
+  public void time(int delayPeriod) {
+    try {
+      Thread.sleep(delayPeriod);
+    } catch (InterruptedException e) {
+      
+    }
+  }
+
+  public void tankDrive(double leftSpeed, double rightSpeed) {
+    diffDrive.tankDrive(leftSpeed, rightSpeed);
   }
 
   public void setBreakMode() {
@@ -81,19 +131,19 @@ public class DriveTrain extends SubsystemBase {
   }
 
   public double getRightEncoderPosition() {
-    return rightEncoder.getPosition();
+    return -rightEncoder.getPosition();
   }
 
   public double getLeftEncoderPosition() {
-    return leftEncoder.getPosition();
+    return -leftEncoder.getPosition();
   }
 
   public double getRightEncoderVelocity() {
-    return rightEncoder.getVelocity();
+    return -rightEncoder.getVelocity();
   }
 
   public double getLeftEncoderVelocity() {
-    return leftEncoder.getVelocity();
+    return -leftEncoder.getVelocity();
   }
 
   public double getTurnRate() {
@@ -148,35 +198,44 @@ public class DriveTrain extends SubsystemBase {
     return g_gyro;
   }
 
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
-    m_odometry.update(g_gyro.getRotation2d(), leftEncoder.getPosition(), rightEncoder.getPosition());
-
-    SmartDashboard.putNumber("Left encoder values (Meters)", getLeftEncoderPosition());
-    SmartDashboard.putNumber("Right encoder values (Meters)", getRightEncoderPosition());
-    SmartDashboard.putNumber("Gyro heading", getHeading());
-  }
-
-  public void setLeft(double speed) {
-    leftMotor.set(speed);
-    SmartDashboard.putNumber("Left Drive", speed);
-
-  }
-
-  public void setRight(double speed) {
-    rightMotor.set(speed); 
-    SmartDashboard.putNumber("Right Drive", speed);
-
-  }
-
-  public void time(int delayPeriod) {
+  public Command loadPathRam(String fileName, boolean resetOdo) {
+    Trajectory trajectory;
+    this.resetEncoders();
     try {
-      Thread.sleep(delayPeriod);
-    } catch (InterruptedException e) {
-      
+      Path trajecPath = Filesystem.getDeployDirectory().toPath().resolve(fileName);
+      trajectory = TrajectoryUtil.fromPathweaverJson(trajecPath);
+      System.out.println("Loaded file");
+    } catch (IOException exception) {
+      // Send errors
+      DriverStation.reportError("Unable to open " + fileName, exception.getStackTrace());
+      System.out.println("Unable to open " + fileName);
+      // Set autonomous command to a blank command
+      return new InstantCommand();
+    }
+
+    RamseteCommand ramCmd = new RamseteCommand(
+      trajectory, this::getPose, 
+      new RamseteController(Constants.AutoConstants.kRamseteB, Constants.AutoConstants.kRamseteZeta),
+      new SimpleMotorFeedforward(Constants.AutoConstants.ksVolts, Constants.AutoConstants.kvVoltSecondsPerMeter, Constants.AutoConstants.kvVoltSecondsSquaredPerMeter),
+      Constants.AutoConstants.kDriveKinematics,
+      this::getWheelSpeeds,
+      new PIDController(Constants.AutoConstants.kPDriveVel, 0, 0),
+      new PIDController(Constants.AutoConstants.kPDriveVel, 0, 0),
+      this::tankDriveVolts, 
+      this
+    );
+
+    if (resetOdo == true) {
+      return new SequentialCommandGroup(
+        new InstantCommand(() -> this.resetOdometery(trajectory.getInitialPose())),
+        ramCmd
+      );
+    } else {
+      return ramCmd;
     }
   }
+
+  // Auto based on distance, DOES NOT WORK!
 
   /* 
   public double encoderVal(String motor) {

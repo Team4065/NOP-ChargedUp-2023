@@ -4,22 +4,15 @@
 
 package frc.robot;
 
-import java.io.IOException;
-import java.nio.file.Path;
-
-import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrajectoryUtil;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
-import frc.robot.commands.Swing;
+import frc.robot.commands.Auto.BasicAuto;
 import frc.robot.commands.Drivetrain.ArcadeDrive;
 import frc.robot.commands.Drivetrain.TankDrive;
 import frc.robot.subsystems.Claw;
@@ -53,33 +46,20 @@ public class RobotContainer {
 
   // D-pad
   public static POVButton upButton = new POVButton(XboxC, 0);
-
-  SendableChooser<Command> m_chooser = SendableChooser<>();
+  
+  SendableChooser<Command> m_chooser = new SendableChooser<>();
   
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the button bindings
     m_drivetrain.setDefaultCommand(new TankDrive());
-    m_swingarm.setDefaultCommand(new Swing());
+    // m_swingarm.setDefaultCommand(new Swing());
 
     configureButtonBindings();
-
-    m_chooser.addOption("Straight", getAutonomousCommand());
-  }
-
-  public Command loadPathToRam(String fileName, boolean resetOdo) {
-    Trajectory trajectory;
-    try {
-      Path trajecPath = Filesystem.getDeployDirectory().toPath().resolve(fileName);
-      trajectory = TrajectoryUtil.fromPathweaverJson(trajecPath);
-
-    } catch (IOException exception) {
-      // Send errors
-      DriverStation.reportError("Unable to open " + fileName, exception.getStackTrace());
-      System.out.println("Unable to open " + fileName);
-      // Set autonomous command to a blank command
-      return new InstantCommand();
-    }
+    // "C:\Users\Jainish\Desktop\FRC\W Code 2023\src\main\deploy\deploy\pathplanner\generatedJSON\test.wpilib.json"
+    // m_chooser.addOption("Straight", loadPathToRam("deploy/pathplanner/generatedJSON/test.wpilib.json", true));
+    m_chooser.addOption("Test", new BasicAuto());
+    Shuffleboard.getTab("Auto").add(m_chooser);
   }
 
   /**
@@ -102,6 +82,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
-    return new InstantCommand();
+    return m_chooser.getSelected();
   }
 }

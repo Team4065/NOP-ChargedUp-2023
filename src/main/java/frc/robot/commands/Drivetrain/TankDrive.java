@@ -21,11 +21,11 @@ public class TankDrive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    Double LYJ = -(RobotContainer.XboxC.getRawAxis(1)); // Left Joystick, y-axis
-    Double RYJ = -(RobotContainer.XboxC.getRawAxis(5)); // Right Joystick, y-axis
+    
+    Double LYJ = (RobotContainer.XboxC.getRawAxis(1)); // Left Joystick, y-axis
+    Double RYJ = (RobotContainer.XboxC.getRawAxis(5)); // Right Joystick, y-axis
 
-    RobotContainer.m_drivetrain.setRight(RYJ * 0.75);
-    RobotContainer.m_drivetrain.setLeft(LYJ * 0.75);
+    RobotContainer.m_drivetrain.tankDrive(-LYJ, -RYJ);
     // System.out.println(RobotContainer.m_drivetrain.distanceMove("right", 1));
   }
 

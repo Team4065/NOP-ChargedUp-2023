@@ -22,8 +22,8 @@ public class ArcadeDrive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    Double LYJ = -(RobotContainer.XboxC.getRawAxis(1)); // Left Joystick, y-axis
-    Double RXJ = -(RobotContainer.XboxC.getRawAxis(4)); // Right Joystick, x-axis p;
+    Double LYJ = (RobotContainer.XboxC.getRawAxis(1)); // Left Joystick, y-axis
+    Double RXJ = (RobotContainer.XboxC.getRawAxis(4)); // Right Joystick, x-axis p;
     // Arcade
     RobotContainer.m_drivetrain.setRight((LYJ + RXJ) * 0.75);
     RobotContainer.m_drivetrain.setLeft((LYJ - RXJ) * 0.75);

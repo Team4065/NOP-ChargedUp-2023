@@ -4,17 +4,20 @@
 
 package frc.robot;
 
-import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.Autos;
-import frc.robot.commands.ExampleCommand;
-import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.Elevator;
-import frc.robot.subsystems.ExampleSubsystem;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.DriveTrain;
+import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.Autos;
+import frc.robot.commands.DriveTrainControl;
+import frc.robot.commands.ExampleCommand;
+import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.ExampleSubsystem;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -30,7 +33,10 @@ public class RobotContainer {
 
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
-  private static Joystick JoyC =  new Joystick(OperatorConstants.kDriverControllerPort);
+  private static XboxController XBC = new XboxController(0);
+  
+  private final DriveTrainControl m_DriveTrainControl = new DriveTrainControl(m_drivetrain, XBC);
+
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -48,16 +54,7 @@ public class RobotContainer {
    * joysticks}.
    */
 
-   public static JoystickButton AB = new JoystickButton(JoyC, 1);
-  public static JoystickButton BB = new JoystickButton(JoyC, 2);
-  public static JoystickButton XB = new JoystickButton(JoyC, 3);
-  public static JoystickButton YB = new JoystickButton(JoyC, 4);
-  public static JoystickButton LB = new JoystickButton(JoyC, 5);
-  public static JoystickButton RB = new JoystickButton(JoyC, 6);
-  public static JoystickButton HB = new JoystickButton(JoyC, 7);
-  public static JoystickButton ZB = new JoystickButton(JoyC, 8);
-  public static JoystickButton LJB = new JoystickButton(JoyC, 9);
-  public static JoystickButton RJB = new JoystickButton(JoyC, 10);
+
 
   private void configureBindings() {
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
@@ -77,12 +74,17 @@ public class RobotContainer {
     // An example command will be run in autonomous
     return Autos.exampleAuto(m_exampleSubsystem);
   }
+
+    public Command getInitCommand(){
+    return m_DriveTrainControl;
+  }
+
   public static double getDeadZone(int axis){
     return axis;
   }
 
   public static double getAxisRamped(int axis){
-    return 1.0377241992 * (2 / (1 + Math.pow(Math.E, -4 * JoyC.getRawAxis(axis))));
+    return 1.0377241992 * (2 / (1 + Math.pow(Math.E, -4 * XBC.getRawAxis(axis))));
   }
 
 }

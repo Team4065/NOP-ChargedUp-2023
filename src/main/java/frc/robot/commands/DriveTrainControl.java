@@ -4,20 +4,23 @@
 
 package frc.robot.commands;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Subsystem;
-import frc.robot.RobotContainer;
+import frc.robot.Constants.DriveTrain;
+import frc.robot.subsystems.Drivetrain;
 
-public class TankDrive extends CommandBase {
-  /** Creates a new TankDrive. */
-  Subsystem s_subsystem;
-  Double m_speed;
-  public TankDrive(Subsystem subsystem, Double speed) {
+public class DriveTrainControl extends CommandBase {
+  
+  private Drivetrain m_driveTrain;
+  private XboxController XBC;
+
+  /** Creates a new DriveTrainControl. */
+  public DriveTrainControl(Drivetrain m_Drivetrain, XboxController XBC) {
     // Use addRequirements() here to declare subsystem dependencies.
-    subsystem = s_subsystem;
-    speed = m_speed;
+    this.m_driveTrain = m_Drivetrain;
+    this.XBC = XBC;
+    addRequirements(m_Drivetrain);
   }
 
   // Called when the command is initially scheduled.
@@ -27,13 +30,8 @@ public class TankDrive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    Double LJY = RobotContainer.getAxisRamped(1);
-    Double RJY = RobotContainer.getAxisRamped(5);
-
-    RobotContainer.m_drivetrain.setRight(ControlMode.PercentOutput, m_speed * RJY);
-    RobotContainer.m_drivetrain.setLeft(ControlMode.PercentOutput, m_speed * LJY);
+    m_driveTrain.drive(XBC.getLeftY(), XBC.getRightX());
   }
-
 
   // Called once the command ends or is interrupted.
   @Override

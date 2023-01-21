@@ -10,11 +10,11 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Constants.DriveTrain;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
-import frc.robot.commands.DriveTrainControl;
+import frc.robot.commands.Elli;
 import frc.robot.commands.ExampleCommand;
+import frc.robot.commands.TankDrive;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.ExampleSubsystem;
@@ -33,16 +33,21 @@ public class RobotContainer {
 
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
-  private static XboxController XBC = new XboxController(0);
+  private static Joystick XBC = new Joystick(0);
   
-  private final DriveTrainControl m_DriveTrainControl = new DriveTrainControl(m_drivetrain, XBC);
+  
 
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
     configureBindings();
+    m_drivetrain.setDefaultCommand(new TankDrive(m_drivetrain, 1.0));
+    m_elevator.setDefaultCommand(new Elli(0, null));
+
   }
+
+  public static JoystickButton AB = new JoystickButton(XBC, 1);
 
   /**
    * Use this method to define your trigger->command mappings. Triggers can be created via the
@@ -63,6 +68,8 @@ public class RobotContainer {
 
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
+    AB.onTrue(new TankDrive(m_drivetrain, 1.0));
+    
   }
 
   /**
@@ -76,11 +83,11 @@ public class RobotContainer {
   }
 
     public Command getInitCommand(){
-    return m_DriveTrainControl;
+    return null;
   }
 
   public static double getDeadZone(int axis){
-    return axis;
+    return XBC.getRawAxis(axis);
   }
 
   public static double getAxisRamped(int axis){

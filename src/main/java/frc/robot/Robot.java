@@ -5,8 +5,10 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.commands.TankDrive;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -16,8 +18,10 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
  */
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
+  private Command m_initCommand;
 
   private RobotContainer m_robotContainer;
+  XboxController m_XBC;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -74,10 +78,13 @@ public class Robot extends TimedRobot {
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
+    m_initCommand = m_robotContainer.getInitCommand();
+    
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
-
+    
+   new TankDrive(m_robotContainer.m_drivetrain, 0.5);
   }
 
   /** This function is called periodically during operator control. */

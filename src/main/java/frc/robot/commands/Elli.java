@@ -28,7 +28,7 @@ public class Elli extends CommandBase {
   @Override
   public void execute() {
     RobotContainer.m_elevator.setElliMotorsPos(m_pos);
-    System.out.print("Set to: "+ m_pos + "Currently at " + RobotContainer.m_elevator.getElliPos());
+  //  System.out.print("Set to: "+ m_pos + "Currently at " + RobotContainer.m_elevator.getElliPos());
     FIN = true;
   }
 

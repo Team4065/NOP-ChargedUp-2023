@@ -15,19 +15,11 @@ package frc.robot;
 public final class Constants {
   public static class OperatorConstants {
     public static final int Joystick = 0;
-    public static final int RightMaster = 1;
-    public static final int RightSlave = 2;
-    public static final int LeftMaster = 3;
-    public static final int LeftSlave = 4;
+    public static final int RightMaster = 2;
+    public static final int RightSlave = 4;
+    public static final int LeftMaster = 1;
+    public static final int LeftSlave = 3;
     public static final int elevator = 0;
   }
 
-    public static class DriveTrain {
-
-    public static final int LEFT_MOTOR_SLAVE = 0;
-    public static final int LEFT_MOTOR_MASTER = 0;
-    public static final int RIGHT_MOTOR_SLAVE = 0;
-    public static final int RIGHT_MOTOR_MASTER = 0;
-  }
-  
 }

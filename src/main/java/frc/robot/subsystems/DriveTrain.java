@@ -209,7 +209,7 @@ public class DriveTrain extends SubsystemBase {
       // Send errors
       DriverStation.reportError("Unable to open " + fileName, exception.getStackTrace());
       System.out.println("Unable to open " + fileName);
-      // Set autonomous command to a blank command
+      // Set autonomous command to a blank command if you cannot open the file
       return new InstantCommand();
     }
 

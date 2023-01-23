@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
@@ -12,7 +13,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
-import frc.robot.commands.Auto.BasicAuto;
+import frc.robot.commands.Auto.TestAuto;
 import frc.robot.commands.Drivetrain.ArcadeDrive;
 import frc.robot.commands.Drivetrain.TankDrive;
 import frc.robot.subsystems.Claw;
@@ -56,11 +57,10 @@ public class RobotContainer {
     // m_swingarm.setDefaultCommand(new Swing());
 
     configureButtonBindings();
-    // "C:\Users\Jainish\Desktop\FRC\W Code 2023\src\main\deploy\deploy\pathplanner\generatedJSON\test.wpilib.json"
-    // m_chooser.addOption("Straight", loadPathToRam("deploy/pathplanner/generatedJSON/test.wpilib.json", true));
-    m_chooser.addOption("Test", new BasicAuto());
+    m_chooser.addOption("Test", new TestAuto().cmd());
     Shuffleboard.getTab("Auto").add(m_chooser);
   }
+
 
   /**
    * Use this method to define your button->command mappings. Buttons can be created by
@@ -81,7 +81,6 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // An ExampleCommand will run in autonomous
     return m_chooser.getSelected();
   }
 }

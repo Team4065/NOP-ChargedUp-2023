@@ -13,9 +13,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
+import frc.robot.commands.TankDrive;
 import frc.robot.commands.Auto.TestAuto;
-import frc.robot.commands.Drivetrain.ArcadeDrive;
-import frc.robot.commands.Drivetrain.TankDrive;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.SwingArm;
@@ -53,12 +52,16 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the button bindings
-    m_drivetrain.setDefaultCommand(new TankDrive());
+    m_drivetrain.setDefaultCommand(new TankDrive(1.0));
     // m_swingarm.setDefaultCommand(new Swing());
 
     configureButtonBindings();
     m_chooser.addOption("Test", new TestAuto().cmd());
     Shuffleboard.getTab("Auto").add(m_chooser);
+  }
+
+  public static double getDeadZone(int axis){
+    return XboxC.getRawAxis(axis);
   }
 
 
@@ -70,8 +73,6 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // YB.whenPressed(new FlagCmd(true, m_pne));
-    BB.onTrue(new TankDrive());
-    XB.onTrue(new ArcadeDrive());    
     // YB.onTrue(new ClawOpenAndClose(200, 0.1, 0.9));
   }
 

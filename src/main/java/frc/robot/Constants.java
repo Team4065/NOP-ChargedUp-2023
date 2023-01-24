@@ -25,6 +25,13 @@ public final class Constants {
    public static final int potPort = 3;
    public static final int usbCamera = 1;
 
+   public static final class DriveConstants {
+      public static final int RightMaster = 2;
+      public static final int RightSlave = 4;
+      public static final int LeftMaster = 1;
+      public static final int LeftSlave = 3;
+   }
+
    public static final class AutoConstants {
       public static final double ksVolts = 0.14534;
       public static final double kvVoltSecondsPerMeter = 4.0318;
@@ -40,11 +47,10 @@ public final class Constants {
       public static final double kRamseteB = 2;
       public static final double kRamseteZeta = 0.7;
 
-      public static final double kGearRatio = 10;
+      public static final double kGearRatio = 6.44;
       public static final double kWheelRadiusInches = 2;
 
-      public static final double kConversionMeters = Units.inchesToMeters(
-         (1 / (kGearRatio * 2 * Math.PI * Units.inchesToMeters(kWheelRadiusInches)) * 10)
-      );
+      // 4096 revloutions per rotation of the encoder
+      public static final double kConversionMeters = ((1 / 4096) * kGearRatio * 2 * Math.PI * kWheelRadiusInches);
    }
 }

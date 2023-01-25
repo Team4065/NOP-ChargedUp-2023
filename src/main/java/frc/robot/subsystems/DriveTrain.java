@@ -13,13 +13,11 @@ import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryUtil;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
-import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -37,10 +35,6 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.kauailabs.navx.frc.AHRS;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.CANSparkMax.IdleMode;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 
 public class DriveTrain extends SubsystemBase {
@@ -58,6 +52,8 @@ public class DriveTrain extends SubsystemBase {
   WPI_TalonFX rightM = new WPI_TalonFX(Constants.DriveConstants.RightMaster);
   WPI_TalonFX rightS = new WPI_TalonFX(Constants.DriveConstants.RightSlave);
 
+  TalonFX test = new TalonFX(0, getName());
+
   // Create motor control groups so it's easier to manage
   MotorControllerGroup leftSideDrive = new MotorControllerGroup(leftM, leftS);
   MotorControllerGroup rightSideDrive = new MotorControllerGroup(rightM, rightS);
@@ -74,14 +70,13 @@ public class DriveTrain extends SubsystemBase {
   public static Gyro g_gyro = new AHRS(SPI.Port.kMXP);
   private final DifferentialDriveOdometry m_odometry;
 
-  double leftMEncoder, rightMEncoder;
 
   /** Creates a new DriveTrain. */
   public DriveTrain() {
     g_gyro.reset();
 
-    leftSideDrive.setInverted(true);
-    rightSideDrive.setInverted(false);
+    leftSideDrive.setInverted(false);
+    rightSideDrive.setInverted(true);
 
     leftS.follow(leftM);
     rightS.follow(rightM);
@@ -89,22 +84,30 @@ public class DriveTrain extends SubsystemBase {
     leftM.setSelectedSensorPosition(0);
     rightM.setSelectedSensorPosition(0);
 
-    // Convert encoder ticks to meters
-    leftMEncoder = Units.inchesToMeters(leftM.getSelectedSensorPosition() * Constants.AutoConstants.kConversionMeters);
-    rightMEncoder = Units.inchesToMeters(rightM.getSelectedSensorPosition() * Constants.AutoConstants.kConversionMeters);
 
-    m_odometry = new DifferentialDriveOdometry(g_gyro.getRotation2d(), leftMEncoder, rightMEncoder);
-    m_odometry.resetPosition(g_gyro.getRotation2d(), leftMEncoder, rightMEncoder, new Pose2d());
+    m_odometry = new DifferentialDriveOdometry(
+      g_gyro.getRotation2d(),
+      leftM.getSelectedSensorPosition() * Constants.AutoConstants.kConversionMeters,
+      rightM.getSelectedSensorPosition() * Constants.AutoConstants.kConversionMeters
+    );
+    m_odometry.resetPosition(
+      g_gyro.getRotation2d(),
+      leftM.getSelectedSensorPosition() * Constants.AutoConstants.kConversionMeters,
+      rightM.getSelectedSensorPosition() * Constants.AutoConstants.kConversionMeters,
+      new Pose2d()
+    );
   }
 
   
 
   @Override
   public void periodic() {
-    leftMEncoder = Units.inchesToMeters(leftM.getSelectedSensorPosition() * Constants.AutoConstants.kConversionMeters);
-    rightMEncoder = Units.inchesToMeters(rightM.getSelectedSensorPosition() * Constants.AutoConstants.kConversionMeters);
     // This method will be called once per scheduler run
-    m_odometry.update(g_gyro.getRotation2d(), leftMEncoder, rightMEncoder);
+    m_odometry.update(
+      g_gyro.getRotation2d(),
+      leftM.getSelectedSensorPosition() * Constants.AutoConstants.kConversionMeters,
+      rightM.getSelectedSensorPosition() * Constants.AutoConstants.kConversionMeters
+    );
 
     SmartDashboard.putNumber("Left encoder values (Meters)", getLeftEncoderPosition());
     SmartDashboard.putNumber("Right encoder values (Meters)", getRightEncoderPosition());
@@ -163,11 +166,12 @@ public class DriveTrain extends SubsystemBase {
   }
 
   public double getRightEncoderVelocity() {
-    return (rightM.getSelectedSensorVelocity() * Constants.AutoConstants.kConversionMeters) / 60;
+    // Multiply the raw velocity by 10 since it reports per 100 ms
+    return rightM.getSelectedSensorVelocity() * 10 * Constants.AutoConstants.kConversionMeters;
   }
 
   public double getLeftEncoderVelocity() {
-    return (rightM.getSelectedSensorVelocity() * Constants.AutoConstants.kConversionMeters) / 60;
+    return leftM.getSelectedSensorPosition() * 10 * Constants.AutoConstants.kConversionMeters;
   }
 
   public double getTurnRate() {
@@ -184,10 +188,12 @@ public class DriveTrain extends SubsystemBase {
 
   public void resetOdometery(Pose2d pose) {
     resetEncoders();
-    leftMEncoder = leftM.getSelectedSensorPosition() * Constants.AutoConstants.kConversionMeters;
-    rightMEncoder = rightM.getSelectedSensorPosition() * Constants.AutoConstants.kConversionMeters;
-
-    m_odometry.resetPosition(g_gyro.getRotation2d(), leftMEncoder, rightMEncoder, new Pose2d());
+    m_odometry.resetPosition(
+      g_gyro.getRotation2d(),
+      leftM.getSelectedSensorPosition() * Constants.AutoConstants.kConversionMeters,
+      rightM.getSelectedSensorPosition() * Constants.AutoConstants.kConversionMeters,
+      new Pose2d()
+    );
   }
 
   public DifferentialDriveWheelSpeeds getWheelSpeeds() {
@@ -243,8 +249,8 @@ public class DriveTrain extends SubsystemBase {
     RamseteCommand ramCmd = new RamseteCommand(
       trajectory, this::getPose, 
       new RamseteController(Constants.AutoConstants.kRamseteB, Constants.AutoConstants.kRamseteZeta),
-      new SimpleMotorFeedforward(Constants.AutoConstants.ksVolts, Constants.AutoConstants.kvVoltSecondsPerMeter, Constants.AutoConstants.kvVoltSecondsSquaredPerMeter),
-      Constants.AutoConstants.kDriveKinematics,
+      new SimpleMotorFeedforward(Constants.AutoConstants.ksVolts, Constants.AutoConstants.kvVoltSecondsPerMeter, Constants.AutoConstants.kaVoltSecondsSquaredPerMeter),
+      Constants.DriveConstants.kDriveKinematics,
       this::getWheelSpeeds,
       new PIDController(Constants.AutoConstants.kPDriveVel, 0, 0),
       new PIDController(Constants.AutoConstants.kPDriveVel, 0, 0),

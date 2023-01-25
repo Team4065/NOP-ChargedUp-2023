@@ -15,9 +15,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.commands.TankDrive;
 import frc.robot.commands.Auto.TestAuto;
-import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.DriveTrain;
-import frc.robot.subsystems.SwingArm;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -29,8 +27,6 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
 
   public final static DriveTrain m_drivetrain = new DriveTrain();
-  public final static Claw m_claw = new Claw();
-  public final static SwingArm m_swingarm = new SwingArm();
 
 
   // Controller

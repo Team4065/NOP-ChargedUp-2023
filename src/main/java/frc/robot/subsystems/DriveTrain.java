@@ -99,13 +99,13 @@ public class DriveTrain extends SubsystemBase {
 
     m_odometry = new DifferentialDriveOdometry(
       g_gyro.getRotation2d(),
-      encoderTicksToMeters(leftM.getSelectedSensorPosition(), 4096, Constants.DriveConstants.kGearRatio, Constants.DriveConstants.kWheelCircumferenceInches),
-      encoderTicksToMeters(rightM.getSelectedSensorPosition(), 4096, Constants.DriveConstants.kGearRatio, Constants.DriveConstants.kWheelCircumferenceInches)
+      encoderTicksToMeters(leftM.getSelectedSensorPosition()),
+      encoderTicksToMeters(rightM.getSelectedSensorPosition())
     );
     m_odometry.resetPosition(
       g_gyro.getRotation2d(),
-      encoderTicksToMeters(leftM.getSelectedSensorPosition(), 4096, Constants.DriveConstants.kGearRatio, Constants.DriveConstants.kWheelCircumferenceInches),
-      encoderTicksToMeters(rightM.getSelectedSensorPosition(), 4096, Constants.DriveConstants.kGearRatio, Constants.DriveConstants.kWheelCircumferenceInches),
+      encoderTicksToMeters(leftM.getSelectedSensorPosition()),
+      encoderTicksToMeters(rightM.getSelectedSensorPosition()),
       new Pose2d()
     );
   }
@@ -117,8 +117,8 @@ public class DriveTrain extends SubsystemBase {
     // This method will be called once per scheduler run
     m_odometry.update(
       g_gyro.getRotation2d(),
-      encoderTicksToMeters(leftM.getSelectedSensorPosition(), 4096, Constants.DriveConstants.kGearRatio, Constants.DriveConstants.kWheelCircumferenceInches),
-      encoderTicksToMeters(rightM.getSelectedSensorPosition(), 4096, Constants.DriveConstants.kGearRatio, Constants.DriveConstants.kWheelCircumferenceInches)
+      encoderTicksToMeters(leftM.getSelectedSensorPosition()),
+      encoderTicksToMeters(rightM.getSelectedSensorPosition())
     );
 
     SmartDashboard.putNumber("Left encoder values (Meters)", getLeftEncoderPosition());
@@ -139,8 +139,11 @@ public class DriveTrain extends SubsystemBase {
   }
 
   // This method can be used to convert encoder ticks to meters 
-  public double encoderTicksToMeters(double currentEncoderValue, double encoderFullRev, double gearRatio, double wheelCircumferenceInInches) {
-    return ((currentEncoderValue / encoderFullRev) / gearRatio) * Units.inchesToMeters(wheelCircumferenceInInches);
+  public double encoderTicksToMeters(double currentEncoderValue) {
+    double motorRotations = (double) currentEncoderValue / Constants.AutoConstants.kEncoderFullRev;
+    double wheelRotations = motorRotations / Constants.DriveConstants.kGearRatio;
+    double positionMeters = wheelRotations * (2 * Math.PI * Units.inchesToMeters(Constants.DriveConstants.kWheelRadiusInches));
+    return positionMeters;
   }
 
 
@@ -169,20 +172,20 @@ public class DriveTrain extends SubsystemBase {
   }
 
   public double getRightEncoderPosition() {
-    return -encoderTicksToMeters(rightM.getSelectedSensorPosition(), 4096, Constants.DriveConstants.kGearRatio, Constants.DriveConstants.kWheelCircumferenceInches);
+    return -encoderTicksToMeters(rightM.getSelectedSensorPosition());  
   }
 
   public double getLeftEncoderPosition() {
-    return encoderTicksToMeters(leftM.getSelectedSensorPosition(), 4096, Constants.DriveConstants.kGearRatio, Constants.DriveConstants.kWheelCircumferenceInches);
+    return encoderTicksToMeters(leftM.getSelectedSensorPosition());
   }
 
   public double getRightEncoderVelocity() {
     // Multiply the raw velocity by 10 since it reports per 100 ms, we want the velocity in m/s
-    return -encoderTicksToMeters(rightM.getSelectedSensorVelocity(), 4096, Constants.DriveConstants.kGearRatio, Constants.DriveConstants.kWheelCircumferenceInches) * 10;
+    return -encoderTicksToMeters(rightM.getSelectedSensorVelocity()) * 10;
   }
 
   public double getLeftEncoderVelocity() {
-    return encoderTicksToMeters(leftM.getSelectedSensorVelocity(), 4096, Constants.DriveConstants.kGearRatio, Constants.DriveConstants.kWheelCircumferenceInches) * 10;
+    return encoderTicksToMeters(leftM.getSelectedSensorVelocity()) * 10;
   }
 
   public double getTurnRate() {
@@ -201,8 +204,8 @@ public class DriveTrain extends SubsystemBase {
     resetEncoders();
     m_odometry.resetPosition(
       g_gyro.getRotation2d(),
-      encoderTicksToMeters(leftM.getSelectedSensorPosition(), 4096, Constants.DriveConstants.kGearRatio, Constants.DriveConstants.kWheelCircumferenceInches),
-      encoderTicksToMeters(rightM.getSelectedSensorPosition(), 4096, Constants.DriveConstants.kGearRatio, Constants.DriveConstants.kWheelCircumferenceInches),
+      encoderTicksToMeters(leftM.getSelectedSensorPosition()),
+      encoderTicksToMeters(rightM.getSelectedSensorPosition()),
       new Pose2d()
     );
   }

@@ -26,12 +26,11 @@ public class TankDrive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    Double RJY = RobotContainer.getDeadZone(5);
-    Double LJY = RobotContainer.getDeadZone(1);
+    Double RJY = RobotContainer.getDeadZone(1) * PO;
+    Double LJY = RobotContainer.getDeadZone(5) * PO;
 
     RobotContainer.m_drivetrain.tankDrive(LJY, RJY);
-
-    System.out.println(RJY + " and " + LJY);
+  
   }
 
 

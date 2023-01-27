@@ -3,7 +3,7 @@
   "encoder type": "Built-in",
   "encoding": false,
   "gearing denominator": 1.0,
-  "gearing numerator": 6.44,
+  "gearing numerator": 5.4545,
   "gyro": "NavX",
   "gyro ctor": "SPI (MXP)",
   "is drivetrain": true,
@@ -11,7 +11,7 @@
     "TalonFX",
     "TalonFX"
   ],
-  "number of samples per average": 1,
+  "number of samples per average": 7,
   "primary encoder inverted": false,
   "primary encoder ports": [
     0,

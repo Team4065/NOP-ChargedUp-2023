@@ -48,7 +48,7 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the button bindings
-    m_drivetrain.setDefaultCommand(new TankDrive(1.0));
+    m_drivetrain.setDefaultCommand(new TankDrive(0.75));
     // m_swingarm.setDefaultCommand(new Swing());
 
     configureButtonBindings();
@@ -57,7 +57,7 @@ public class RobotContainer {
   }
 
   public static double getDeadZone(int axis){
-    return XboxC.getRawAxis(axis);
+    return -XboxC.getRawAxis(axis);
   }
 
 

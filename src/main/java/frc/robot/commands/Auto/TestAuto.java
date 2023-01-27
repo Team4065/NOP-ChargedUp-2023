@@ -12,7 +12,7 @@ import frc.robot.commands.Time;
 /** Add your docs here. */
 public class TestAuto {
     public Command cmd() {
-        SequentialCommandGroup cmd = new SequentialCommandGroup(RobotContainer.m_drivetrain.loadPathRam("deploy/pathplanner/generatedJSON/test.wpilib.json", true), new Time(1000), RobotContainer.m_drivetrain.loadPathRam("deploy/pathplanner/generatedJSON/back.wpilib.json", false));
+        SequentialCommandGroup cmd = new SequentialCommandGroup(RobotContainer.m_drivetrain.loadPathRam("deploy/pathplanner/generatedJSON/test.wpilib.json", true));
         return cmd;
     }
 }

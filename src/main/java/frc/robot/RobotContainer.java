@@ -4,13 +4,19 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
 import frc.robot.commands.ExampleCommand;
+import frc.robot.commands.TankDrive;
+import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.ExampleSubsystem;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.subsystems.Intake;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -21,16 +27,32 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
+  public final static Drivetrain m_drivetrain = new Drivetrain();
+  public final static Intake m_intake = new Intake();
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
-  private final CommandXboxController m_driverController =
-      new CommandXboxController(OperatorConstants.kDriverControllerPort);
+  private static Joystick XBC = new Joystick(1);
+  
+  
+
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
     configureBindings();
+    m_drivetrain.setDefaultCommand(new TankDrive(m_drivetrain, 1.0));
+
   }
+
+  public static JoystickButton AB = new JoystickButton(XBC, 1);
+  public static JoystickButton BB = new JoystickButton(XBC,2);
+
+
+  public static JoystickButton B1 = new JoystickButton(XBC, 8);
+  public static JoystickButton B2 = new JoystickButton(XBC, 9);
+  public static JoystickButton B3 = new JoystickButton(XBC, 10);
+  public static JoystickButton B4 = new JoystickButton(XBC, 11);
+
 
   /**
    * Use this method to define your trigger->command mappings. Triggers can be created via the
@@ -41,6 +63,9 @@ public class RobotContainer {
    * PS4} controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
    * joysticks}.
    */
+
+
+
   private void configureBindings() {
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
     new Trigger(m_exampleSubsystem::exampleCondition)
@@ -48,7 +73,15 @@ public class RobotContainer {
 
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
-    m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
+    B1.onTrue(new TankDrive(m_drivetrain, 1.0));
+
+    AB.onTrue(new TankDrive(true));
+    BB.onTrue(new TankDrive(false));
+
+    B2.onTrue(new TankDrive(0));
+    B3.onTrue(new TankDrive(1));
+    B4.onTrue(new TankDrive(2));
+    
   }
 
   /**
@@ -60,4 +93,17 @@ public class RobotContainer {
     // An example command will be run in autonomous
     return Autos.exampleAuto(m_exampleSubsystem);
   }
+
+    public Command getInitCommand(){
+    return null;
+  }
+
+  public static double getDeadZone(int axis){
+    return XBC.getRawAxis(axis);
+  }
+
+  public static double getAxisRamped(int axis){
+    return 1.0377241992 * (2 / (1 + Math.pow(Math.E, -4 * XBC.getRawAxis(axis))));
+  }
+
 }

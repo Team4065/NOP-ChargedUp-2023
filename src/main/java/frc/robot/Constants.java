@@ -22,4 +22,6 @@ public final class Constants {
     public static final int elevator = 0;
   }
 
+public static final int Intake = 0;
+
 }

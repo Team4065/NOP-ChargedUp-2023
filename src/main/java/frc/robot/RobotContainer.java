@@ -12,12 +12,12 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
-import frc.robot.commands.Elli;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.commands.TankDrive;
+import frc.robot.subsystems.Airsystems;
 import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.ExampleSubsystem;
+import frc.robot.subsystems.Intake;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -28,9 +28,9 @@ import frc.robot.subsystems.ExampleSubsystem;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
-  public final static Elevator m_elevator = new Elevator();
   public final static Drivetrain m_drivetrain = new Drivetrain();
-
+  public final static Intake m_intake = new Intake();
+  public final static Airsystems m_airsystems = new Airsystems();
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private static Joystick XBC = new Joystick(0);
@@ -43,7 +43,6 @@ public class RobotContainer {
     // Configure the trigger bindings
     configureBindings();
     m_drivetrain.setDefaultCommand(new TankDrive(m_drivetrain, 1.0));
-    m_elevator.setDefaultCommand(new Elli(0, null));
 
   }
 

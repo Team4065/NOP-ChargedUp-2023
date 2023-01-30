@@ -20,6 +20,8 @@ import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -34,7 +36,6 @@ import java.nio.file.Path;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.kauailabs.navx.frc.AHRS;
@@ -72,7 +73,11 @@ public class DriveTrain extends SubsystemBase {
   DifferentialDrive diffDrive;
   public static Gyro g_gyro = new AHRS(SPI.Port.kMXP);
   private final DifferentialDriveOdometry m_odometry;
+  private Field2d m_field = new Field2d();
 
+  
+  public static double percentOutput; // This variable controls the percent output
+  public static boolean isReversed;
 
   /** Creates a new DriveTrain. */
   public DriveTrain() {
@@ -81,11 +86,13 @@ public class DriveTrain extends SubsystemBase {
     leftS.follow(leftM);
     rightS.follow(rightM);
 
-    rightM.setInverted(true);
-    rightS.setInverted(true);
-    leftM.setInverted(false);
-    leftS.setInverted(false);
+    rightM.setInverted(false);
+    rightS.setInverted(false);
+    leftM.setInverted(true);
+    leftS.setInverted(true);
 
+    percentOutput = 0.5;
+    isReversed = false;
 
     // leftM.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
     // rightM.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
@@ -94,8 +101,6 @@ public class DriveTrain extends SubsystemBase {
 
     resetEncoders();
 
-    setBreakMode();
-
     diffDrive = new DifferentialDrive(leftSideDrive, rightSideDrive);
 
     m_odometry = new DifferentialDriveOdometry(
@@ -103,9 +108,9 @@ public class DriveTrain extends SubsystemBase {
       encoderTicksToMeters(leftM.getSelectedSensorPosition()),
       encoderTicksToMeters(rightM.getSelectedSensorPosition())
     );
-  }
 
-  
+    Shuffleboard.getTab("Field").add(m_field);
+  }
 
   @Override
   public void periodic() {
@@ -123,6 +128,7 @@ public class DriveTrain extends SubsystemBase {
     SmartDashboard.putNumber("Gyro heading", getHeading());
     SmartDashboard.putNumber("Right encoder", rightM.getSelectedSensorPosition());
     SmartDashboard.putNumber("Left encoder", leftM.getSelectedSensorPosition());
+    m_field.setRobotPose(getPose());
   }
 
   public void setRight(ControlMode controlmode, double value){
@@ -169,28 +175,28 @@ public class DriveTrain extends SubsystemBase {
   }
 
   public double getRightEncoderPosition() {
-    return -encoderTicksToMeters(rightM.getSelectedSensorPosition());  
+    return encoderTicksToMeters(rightM.getSelectedSensorPosition());  
   }
 
   public double getLeftEncoderPosition() {
-    return -encoderTicksToMeters(leftM.getSelectedSensorPosition());
+    return encoderTicksToMeters(leftM.getSelectedSensorPosition());
   }
 
   public double getRightEncoderVelocity() {
     // Multiply the raw velocity by 10 since it reports per 100 ms, we want the velocity in m/s
-    return -encoderTicksToMeters(rightM.getSelectedSensorVelocity()) * 10;
+    return encoderTicksToMeters(rightM.getSelectedSensorVelocity()) * 10;
   }
 
   public double getLeftEncoderVelocity() {
-    return -encoderTicksToMeters(leftM.getSelectedSensorVelocity()) * 10;
+    return encoderTicksToMeters(leftM.getSelectedSensorVelocity()) * 10;
   }
 
   public double getTurnRate() {
-    return -g_gyro.getAngle();
+    return -g_gyro.getRate();
   }
 
   public static double getHeading() {
-    return -g_gyro.getRotation2d().getDegrees();
+    return g_gyro.getRotation2d().getDegrees();
   }
 
   public Pose2d getPose() {
@@ -203,7 +209,7 @@ public class DriveTrain extends SubsystemBase {
       g_gyro.getRotation2d(),
       encoderTicksToMeters(leftM.getSelectedSensorPosition()),
       encoderTicksToMeters(rightM.getSelectedSensorPosition()),
-      new Pose2d()
+      pose
     );
   }
 
@@ -212,8 +218,8 @@ public class DriveTrain extends SubsystemBase {
   }
 
   public void tankDriveVolts(double leftVolts, double rightVolts) {
-    leftM.setVoltage(-leftVolts);
-    rightM.setVoltage(-rightVolts);
+    leftSideDrive.setVoltage(leftVolts);
+    rightSideDrive.setVoltage(rightVolts);
     diffDrive.feed();
   }
 
@@ -234,7 +240,6 @@ public class DriveTrain extends SubsystemBase {
   }
 
   public void zeroHeading() {
-    g_gyro.calibrate();
     g_gyro.reset();
   }
 
@@ -248,6 +253,7 @@ public class DriveTrain extends SubsystemBase {
     try {
       Path trajecPath = Filesystem.getDeployDirectory().toPath().resolve(fileName);
       trajectory = TrajectoryUtil.fromPathweaverJson(trajecPath);
+      this.resetOdometery(trajectory.getInitialPose()); // Here we are setting the robot's pose to the trajectory's starting pose
       System.out.println("Loaded file");
     } catch (IOException exception) {
       // Send errors

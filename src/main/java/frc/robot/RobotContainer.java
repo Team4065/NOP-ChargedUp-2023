@@ -13,8 +13,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
-import frc.robot.commands.TankDrive;
-import frc.robot.commands.Auto.TestAuto;
+import frc.robot.commands.Drivetrain.ChangeSpeed;
+import frc.robot.commands.Drivetrain.TankDrive;
 import frc.robot.subsystems.DriveTrain;
 
 /**
@@ -31,8 +31,7 @@ public class RobotContainer {
 
   // Controller
   public static Joystick XboxC = new Joystick(0);
-
-  // Controller Joysticks
+  public static Joystick buttonBox = new Joystick(1); // ButtonBox that controls speed and direction
 
   // Controller Buttons
   public static JoystickButton YB = new JoystickButton(XboxC, 4);
@@ -42,13 +41,19 @@ public class RobotContainer {
 
   // D-pad
   public static POVButton upButton = new POVButton(XboxC, 0);
+
+  // Buttons from the buttonbox
+  public static JoystickButton B1 = new JoystickButton(buttonBox, 11);
+  public static JoystickButton B2 = new JoystickButton(buttonBox, 10);
+  public static JoystickButton B3 = new JoystickButton(buttonBox, 9);
+  public static JoystickButton B4 = new JoystickButton(buttonBox, 8);
   
   SendableChooser<Command> m_chooser = new SendableChooser<>();
   
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the button bindings
-    m_drivetrain.setDefaultCommand(new TankDrive(0.75));
+    m_drivetrain.setDefaultCommand(new TankDrive());
     // m_swingarm.setDefaultCommand(new Swing());
 
     configureButtonBindings();
@@ -68,8 +73,9 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    // YB.whenPressed(new FlagCmd(true, m_pne));
-    // YB.onTrue(new ClawOpenAndClose(200, 0.1, 0.9));
+    B1.onTrue(new ChangeSpeed(1));
+    B2.onTrue(new ChangeSpeed(0.5));
+    B3.onTrue(new ChangeSpeed(0.2));
   }
 
   /**

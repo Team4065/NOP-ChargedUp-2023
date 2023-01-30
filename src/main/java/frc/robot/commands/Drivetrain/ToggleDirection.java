@@ -2,21 +2,17 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands;
-
+package frc.robot.commands.Drivetrain;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.Subsystem;
-import frc.robot.RobotContainer;
+import frc.robot.subsystems.DriveTrain;
 
-public class TankDrive extends CommandBase {
-  /** Creates a new TankDrive. */
-  Subsystem s_subsystem;
-  double PO;
-  public TankDrive(Double PO) {
+public class ToggleDirection extends CommandBase {
+  /** Creates a new ToggleDirection. */
+  boolean end;
+  public ToggleDirection() {
     // Use addRequirements() here to declare subsystem dependencies.
-    this.PO = PO;
-    addRequirements(RobotContainer.m_drivetrain);
+    end = false;
   }
 
   // Called when the command is initially scheduled.
@@ -26,13 +22,13 @@ public class TankDrive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    Double RJY = RobotContainer.getDeadZone(1) * PO;
-    Double LJY = RobotContainer.getDeadZone(5) * PO;
-
-    RobotContainer.m_drivetrain.tankDrive(LJY, RJY);
-  
+    if (DriveTrain.isReversed == false) {
+      DriveTrain.isReversed = true;
+    } else if (DriveTrain.isReversed == true) {
+      DriveTrain.isReversed = false;
+    }
+    end = true;
   }
-
 
   // Called once the command ends or is interrupted.
   @Override
@@ -41,6 +37,6 @@ public class TankDrive extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return end;
   }
 }

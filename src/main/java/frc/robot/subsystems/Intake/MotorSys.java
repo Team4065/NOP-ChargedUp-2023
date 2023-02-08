@@ -9,17 +9,32 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class MotorSys extends SubsystemBase {
-  CANSparkMax intakeMotor = new CANSparkMax(Constants.Intake.IntakeMotor, MotorType.kBrushless);
+  CANSparkMax intakeMotor = new CANSparkMax(14, MotorType.kBrushless);
   /** Creates a new MotorSys. */
   public MotorSys() {}
 
   public void setMotor(double speed) {
     intakeMotor.set(speed);
   }
+
+  public boolean isRunning(){
+    boolean isrun;
+
+    if (intakeMotor.get() != 0){
+      isrun = true;
+    } else {
+      isrun = false;
+    }
+
+    return isrun;
+  }
+
+  
 
   @Override
   public void periodic() {

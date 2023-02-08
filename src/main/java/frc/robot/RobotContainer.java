@@ -28,6 +28,7 @@ import frc.robot.commands.Drivetrain.ChangeSpeed;
 import frc.robot.commands.Drivetrain.TankDrive;
 import frc.robot.commands.Drivetrain.ToggleDirection;
 import frc.robot.commands.IntakeCmds.IntakeMotorControl;
+import frc.robot.commands.Utils.IntakeBB;
 // import frc.robot.commands.IntakeCmds.SolControl;
 import frc.robot.commands.Utils.Time;
 import frc.robot.subsystems.Belt;
@@ -36,6 +37,7 @@ import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.AutoPaths.LoadPath;
 import frc.robot.subsystems.Intake.AirSys;
+import frc.robot.subsystems.Intake.BeamBreaks;
 import frc.robot.subsystems.Intake.MotorSys;
 
 /**
@@ -51,8 +53,10 @@ public class RobotContainer {
   public final static Shooter m_shooter = new Shooter(2);
   public final static Belt m_belt = new Belt(0);
   public final static Elevator m_elevator = new Elevator();
-  // public final static AirSys m_airsys = new AirSys();
+  public final static AirSys m_airsys = new AirSys();
   public final static MotorSys m_motorsys= new MotorSys();
+  public final static BeamBreaks m_beamBreaks = new BeamBreaks();
+  public final static IntakeBB m_Intake = new IntakeBB(false);
 
   // Controller
   public static Joystick XboxC = new Joystick(0);
@@ -162,8 +166,12 @@ public class RobotContainer {
     RBB.onTrue(new BeltControl(true));
     RBB.onFalse(new BeltControl(false));
 
-    RBB.onTrue(new IntakeMotorControl(0.75));
-    RBB.onFalse(new IntakeMotorControl(0));
+    // RBB.onTrue(new IntakeMotorControl(-0.75));
+    // RBB.onFalse(new IntakeMotorControl(0));
+
+    RBB.onTrue(new IntakeBB(true));
+    RBB.onFalse(new IntakeBB(false));
+
 
     AB.onTrue(new ShooterControl(0));
     AB.onTrue(new BeltControl(0));

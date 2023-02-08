@@ -57,8 +57,9 @@ public final class Constants {
    }
 
    public static final class Intake {
-      public static final int IntakeMotor = 1;
+      public static final int IntakeMotor = 4;
       public static final int pneumaticHub = 0;
+      public static final double IntakeSpeed = 0.6;
    }
 
    public static final class AutoConstants {

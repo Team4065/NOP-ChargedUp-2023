@@ -21,6 +21,10 @@ public class AirSys extends SubsystemBase {
     sol.set(state);
   }
 
+  public boolean getSols(){
+    return sol.get();
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run

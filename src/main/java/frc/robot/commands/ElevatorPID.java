@@ -4,15 +4,25 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.RobotContainer;
 
-public class Time extends CommandBase {
-  /** Creates a new Time. */
-  int time_amount;
-  boolean end = false;
-  public Time(int time_amount) {
+public class ElevatorPID extends CommandBase {
+  /** Creates a new ElevatorPID. */
+  PIDController pid = new PIDController(0.01, 0, 0);
+  AnalogInput input = new AnalogInput(0);
+  AnalogPotentiometer potVal = new AnalogPotentiometer(input);
+
+  boolean end;
+  double pidSetPoint;
+
+  public ElevatorPID(double pidSetPoint) {
     // Use addRequirements() here to declare subsystem dependencies.
-    this.time_amount = time_amount;
+    addRequirements(RobotContainer.m_elevator);
+    this.pidSetPoint = pidSetPoint;
   }
 
   // Called when the command is initially scheduled.
@@ -22,18 +32,7 @@ public class Time extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    try {
-      Thread.sleep(time_amount);
-    } catch (InterruptedException e) {
-      
-    }
-    end = true;
-   /* try {
-      Thread.sleep(100);
-    } catch (InterruptedException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    } */
+    RobotContainer.m_elevator.setMotorSpeed(pid.calculate(potVal.get(), pidSetPoint));
   }
 
   // Called once the command ends or is interrupted.
@@ -43,6 +42,6 @@ public class Time extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return end;
+    return false;
   }
 }

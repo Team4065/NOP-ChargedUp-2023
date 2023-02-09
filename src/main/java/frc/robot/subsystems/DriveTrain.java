@@ -5,17 +5,11 @@
 package frc.robot.subsystems;
 
 
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.RamseteController;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrajectoryUtil;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
@@ -23,15 +17,10 @@ import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RamseteCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
-import java.io.IOException;
-import java.nio.file.Path;
+import java.util.List;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
@@ -39,6 +28,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.kauailabs.navx.frc.AHRS;
+import com.pathplanner.lib.PathPlannerTrajectory;
 
 
 public class DriveTrain extends SubsystemBase {
@@ -73,7 +63,7 @@ public class DriveTrain extends SubsystemBase {
   DifferentialDrive diffDrive;
   public static Gyro g_gyro = new AHRS(SPI.Port.kMXP);
   private final DifferentialDriveOdometry m_odometry;
-  private Field2d m_field = new Field2d();
+  public Field2d m_field = new Field2d();
 
   
   public static double percentOutput; // This variable controls the percent output
@@ -82,6 +72,11 @@ public class DriveTrain extends SubsystemBase {
   /** Creates a new DriveTrain. */
   public DriveTrain() {
     g_gyro.reset();
+
+    rightM.configOpenloopRamp(0.4);
+    leftM.configOpenloopRamp(0.4);
+    rightS.configOpenloopRamp(0.4);
+    leftM.configOpenloopRamp(0.4);
 
     leftS.follow(leftM);
     rightS.follow(rightM);
@@ -100,6 +95,7 @@ public class DriveTrain extends SubsystemBase {
     fxConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.IntegratedSensor;
 
     resetEncoders();
+    setBreakMode();
 
     diffDrive = new DifferentialDrive(leftSideDrive, rightSideDrive);
 
@@ -128,7 +124,14 @@ public class DriveTrain extends SubsystemBase {
     SmartDashboard.putNumber("Gyro heading", getHeading());
     SmartDashboard.putNumber("Right encoder", rightM.getSelectedSensorPosition());
     SmartDashboard.putNumber("Left encoder", leftM.getSelectedSensorPosition());
+    SmartDashboard.putBoolean("Reversed", isReversed);
+    SmartDashboard.putNumber("Percent Speed", percentOutput);
     m_field.setRobotPose(getPose());
+  }
+
+  public void showTraj(List<PathPlannerTrajectory> path) {
+    m_field.getObject("Field").setTrajectory(new Trajectory());
+    m_field.getObject("Field").setTrajectory(path.get(0));
   }
 
   public void setRight(ControlMode controlmode, double value){
@@ -149,6 +152,7 @@ public class DriveTrain extends SubsystemBase {
 
 
   public void tankDrive(double leftSpeed, double rightSpeed) {
+    setCoastMode();
     diffDrive.tankDrive(leftSpeed, rightSpeed);
   }
 
@@ -245,43 +249,5 @@ public class DriveTrain extends SubsystemBase {
 
   public Gyro getGyro() {
     return g_gyro;
-  }
-
-  public Command loadPathRam(String fileName, boolean resetOdo) {
-    Trajectory trajectory;
-    this.resetEncoders();
-    try {
-      Path trajecPath = Filesystem.getDeployDirectory().toPath().resolve(fileName);
-      trajectory = TrajectoryUtil.fromPathweaverJson(trajecPath);
-      this.resetOdometery(trajectory.getInitialPose()); // Here we are setting the robot's pose to the trajectory's starting pose
-      System.out.println("Loaded file");
-    } catch (IOException exception) {
-      // Send errors
-      DriverStation.reportError("Unable to open " + fileName, exception.getStackTrace());
-      System.out.println("Unable to open " + fileName);
-      // Set autonomous command to a blank command if you cannot open the file
-      return new InstantCommand();
-    }
-
-    RamseteCommand ramCmd = new RamseteCommand(
-      trajectory, this::getPose, 
-      new RamseteController(Constants.AutoConstants.kRamseteB, Constants.AutoConstants.kRamseteZeta),
-      new SimpleMotorFeedforward(Constants.AutoConstants.ksVolts, Constants.AutoConstants.kvVoltSecondsPerMeter, Constants.AutoConstants.kaVoltSecondsSquaredPerMeter),
-      Constants.DriveConstants.kDriveKinematics,
-      this::getWheelSpeeds,
-      new PIDController(Constants.AutoConstants.kPDriveVel, 0, 0),
-      new PIDController(Constants.AutoConstants.kPDriveVel, 0, 0),
-      this::tankDriveVolts, 
-      this
-    );
-
-    if (resetOdo == true) {
-      return new SequentialCommandGroup(
-        new InstantCommand(() -> this.resetOdometery(trajectory.getInitialPose())),
-        ramCmd
-      );
-    } else {
-      return ramCmd;
-    }
   }
 }

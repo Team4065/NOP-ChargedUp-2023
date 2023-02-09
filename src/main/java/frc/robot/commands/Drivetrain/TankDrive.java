@@ -29,7 +29,7 @@ public class TankDrive extends CommandBase {
     Double LJY = RobotContainer.getDeadZone(5) * DriveTrain.percentOutput;
 
     if (DriveTrain.isReversed == false) {
-      RobotContainer.m_drivetrain.tankDrive(LJY, RJY);
+      RobotContainer.m_drivetrain.tankDrive(RJY, LJY);
     } else if (DriveTrain.isReversed == true) {
       RobotContainer.m_drivetrain.tankDrive(-LJY, -RJY);
     }

@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.Command;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+<<<<<<< Updated upstream
    public static final int pneumaticHub = 4;
    public static final int s_solenoid = 0;
    public static final int leftMotor = 2;
@@ -29,13 +30,15 @@ public final class Constants {
    public static final int usbCamera = 1;
 
 
+=======
+>>>>>>> Stashed changes
    public static final class DriveConstants {
       public static final int RightMaster = 9;
       public static final int RightSlave = 10;
       public static final int LeftMaster = 18;
       public static final int LeftSlave = 19;
-      public static final double kGearRatio = 6.44;
-      public static final double kWheelRadiusInches = 2;
+      public static final double kGearRatio = 10.9;
+      public static final double kWheelRadiusInches = 3;
       public static final double kWheelCircumferenceInches = 2 * Math.PI * kWheelRadiusInches;
       public static final double kTrackWidthMeters = Units.inchesToMeters(26);
       public static final DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(kTrackWidthMeters);
@@ -62,10 +65,10 @@ public final class Constants {
    }
 
    public static final class AutoConstants {
-      public static final double ksVolts = 0.20328;
-      public static final double kvVoltSecondsPerMeter = 2.1657;
-      public static final double kaVoltSecondsSquaredPerMeter = 0.33571;
-      public static final double kPDriveVel = 5.496; // PID Mode - kp val ---> 0.13009 STILL NEED TO FIX THE PID value
+      public static final double ksVolts = 0.16695;
+      public static final double kvVoltSecondsPerMeter = 2.4363;
+      public static final double kaVoltSecondsSquaredPerMeter = 0.35229;
+      public static final double kPDriveVel = 0.051136; // PID Mode - kp val ---> 0.13009 STILL NEED TO FIX THE PID value
             
       public static final double kMaxSpeedMetersPerSecond = 3;
       public static final double kMaxAccelMetersPerSecondSqaured = 3;
@@ -78,4 +81,13 @@ public final class Constants {
       public static final HashMap<String, Command> testEventMap = new HashMap<>();
       public static final HashMap<String, Command> anotherTestEventMap = new HashMap<>();
    }
+<<<<<<< Updated upstream
+=======
+
+   public static final class Other {
+      public static final int blinkInPWM = 0;
+      public static final I2C.Port colorSensorPort = I2C.Port.kOnboard;
+      public static final double detectThreshold = 0.22;
+   }
+>>>>>>> Stashed changes
 }

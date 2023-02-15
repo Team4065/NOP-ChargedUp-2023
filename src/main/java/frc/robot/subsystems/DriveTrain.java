@@ -52,14 +52,6 @@ public class DriveTrain extends SubsystemBase {
   MotorControllerGroup leftSideDrive = new MotorControllerGroup(leftM, leftS);
   MotorControllerGroup rightSideDrive = new MotorControllerGroup(rightM, rightS);
 
-  // RelativeEncoder rightEncoder = rightMotor.getEncoder();
-  // RelativeEncoder leftEncoder = leftMotor.getEncoder();
-
-  // Values for the distance function
-  // PIDController moveMotorPID = new PIDController(0.5, 0, 0);
-  // public double encoderRawVal;
-  // public double encoderSetpoint;
-
   DifferentialDrive diffDrive;
   public static Gyro g_gyro = new AHRS(SPI.Port.kMXP);
   private final DifferentialDriveOdometry m_odometry;
@@ -73,10 +65,24 @@ public class DriveTrain extends SubsystemBase {
   public DriveTrain() {
     g_gyro.reset();
 
+<<<<<<< Updated upstream
     rightM.configOpenloopRamp(0.4);
     leftM.configOpenloopRamp(0.4);
     rightS.configOpenloopRamp(0.4);
     leftM.configOpenloopRamp(0.4);
+=======
+    rightM.configFactoryDefault();
+    leftM.configFactoryDefault();
+    rightS.configFactoryDefault();
+    rightS.configFactoryDefault();
+
+    // rightM.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 35, 80, 0.75));
+    // leftM.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 35, 80, 0.75));
+    // rightS.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 35, 80, 0.75));
+    // leftS.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 35, 80, 0.75));
+
+    // Set accleration and decleration to 1 second, it will take 1 second to go full throttle
+>>>>>>> Stashed changes
 
     leftS.follow(leftM);
     rightS.follow(rightM);
@@ -89,8 +95,15 @@ public class DriveTrain extends SubsystemBase {
     percentOutput = 0.5;
     isReversed = false;
 
+<<<<<<< Updated upstream
     // leftM.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
     // rightM.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
+=======
+    leftM.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
+    rightM.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
+    leftS.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
+    rightS.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
+>>>>>>> Stashed changes
     
     fxConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.IntegratedSensor;
 
@@ -209,6 +222,7 @@ public class DriveTrain extends SubsystemBase {
 
   public void resetOdometery(Pose2d pose) {
     resetEncoders();
+    zeroHeading();
     m_odometry.resetPosition(
       g_gyro.getRotation2d(),
       encoderTicksToMeters(leftM.getSelectedSensorPosition()),

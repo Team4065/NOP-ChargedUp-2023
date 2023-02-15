@@ -95,11 +95,6 @@
       "/Shuffleboard/Field/Field": "Field2d"
     },
     "windows": {
-      "/Shuffleboard/Auto/SendableChooser[0]": {
-        "window": {
-          "visible": true
-        }
-      },
       "/Shuffleboard/Field/Field": {
         "Field": {
           "arrowSize": 19,

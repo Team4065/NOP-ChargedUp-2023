@@ -8,7 +8,13 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.Constants;
+<<<<<<< Updated upstream
+=======
+import frc.robot.RobotContainer;
+import frc.robot.subsystems.Belt;
+>>>>>>> Stashed changes
 
 public class MotorSys extends SubsystemBase {
   CANSparkMax intakeMotor = new CANSparkMax(Constants.Intake.IntakeMotor, MotorType.kBrushless);
@@ -24,10 +30,35 @@ public class MotorSys extends SubsystemBase {
 
   @Override
   public void periodic() {
+<<<<<<< Updated upstream
     if (move == true) {
       intakeMotor.set(0.2);
     } else {
       intakeMotor.set(0);
+=======
+    RobotContainer.downButton = new POVButton(RobotContainer.XboxC, 180);
+
+    if (RobotContainer.downButton.getAsBoolean() == false) {
+      if (isIntake == false) {
+        if (move == true) {
+          intakeMotor.set(0.2);
+        } else {
+            intakeMotor.set(0);
+        }
+      } else {
+        if (Belt.detectedColor.blue > Constants.Other.detectThreshold) {
+          intakeMotor.set(0);
+        } else {
+          if (move == true) {
+            intakeMotor.set(0.2);
+          } else {
+              intakeMotor.set(0);
+          }
+        }
+      }
+    } else if (RobotContainer.downButton.getAsBoolean() == true) {
+      intakeMotor.set(-0.2);
+>>>>>>> Stashed changes
     }
   }
 }

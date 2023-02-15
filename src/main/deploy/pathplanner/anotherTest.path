@@ -50,7 +50,11 @@
     }
   ],
   "maxVelocity": 2.0,
+<<<<<<< Updated upstream
   "maxAcceleration": 2.0,
+=======
+  "maxAcceleration": 1.0,
+>>>>>>> Stashed changes
   "isReversed": null,
   "markers": []
 }

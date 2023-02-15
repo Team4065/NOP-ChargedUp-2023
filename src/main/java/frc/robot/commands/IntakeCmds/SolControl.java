@@ -6,6 +6,7 @@ package frc.robot.commands.IntakeCmds;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
+<<<<<<< Updated upstream
 
 public class SolControl extends CommandBase {
   /** Creates a new SolControl. */
@@ -14,6 +15,16 @@ public class SolControl extends CommandBase {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(RobotContainer.m_airsys);
     this.state = state;
+=======
+import frc.robot.subsystems.Intake.AirSys;
+
+public class SolControl extends CommandBase {
+  /** Creates a new SolControl. */
+  boolean end;
+  public SolControl() {
+    // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(RobotContainer.m_airsys);
+>>>>>>> Stashed changes
     end = false;
   }
 
@@ -24,7 +35,17 @@ public class SolControl extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+<<<<<<< Updated upstream
     RobotContainer.m_airsys.setSols(state);
+=======
+    if (AirSys.controlState == false) {
+      AirSys.controlState = true;
+    } else if (AirSys.controlState == true) {
+      AirSys.controlState = false;
+    }
+
+    RobotContainer.m_airsys.setSols(AirSys.controlState);
+>>>>>>> Stashed changes
     end = true;
   }
 

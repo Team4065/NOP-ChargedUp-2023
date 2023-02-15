@@ -50,8 +50,11 @@ import frc.robot.subsystems.Intake.MotorSys;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
+<<<<<<< Updated upstream
   // The robot's subsystems and commands are defined here...
 
+=======
+>>>>>>> Stashed changes
   public final static DriveTrain m_drivetrain = new DriveTrain();
   public final static Shooter m_shooter = new Shooter(2);
   public final static Belt m_belt = new Belt(0);
@@ -69,12 +72,19 @@ public class RobotContainer {
   public static JoystickButton XB = new JoystickButton(XboxC, 3);
   public static JoystickButton BB = new JoystickButton(XboxC, 2);
 
+  // Upper controller buttons
   public static JoystickButton LBB = new JoystickButton(XboxC, 5);
   public static JoystickButton RBB = new JoystickButton(XboxC, 6);
 
   // D-pad
   public static POVButton upButton = new POVButton(XboxC, 0);
   public static POVButton downButton = new POVButton(XboxC, 180);
+<<<<<<< Updated upstream
+=======
+  public static POVButton rightButton = new POVButton(XboxC, 90);
+  public static POVButton leftButton = new POVButton(XboxC, 270);
+  
+>>>>>>> Stashed changes
 
   // Buttons from the buttonbox
   public static JoystickButton B1 = new JoystickButton(buttonBox, 11);
@@ -102,7 +112,6 @@ public class RobotContainer {
       eventMap,
       m_drivetrain
     );
-
     List<PathPlannerTrajectory> pathToFollow = PathPlanner.loadPathGroup(pathName, PathPlanner.getConstraintsFromPath(pathName));
     final Command auto = testRouteBuilder.fullAuto(pathToFollow);
     return auto;
@@ -170,6 +179,7 @@ public class RobotContainer {
     RBB.onTrue(new ParallelCommandGroup(new ShooterControl(true), new BeltControl(true)));
     RBB.onFalse(new ParallelCommandGroup(new ShooterControl(false), new BeltControl(false)));
 
+<<<<<<< Updated upstream
     LBB.onTrue(new ParallelCommandGroup(new BeltControl(true), new IntakeMotorControl(true)));
     LBB.onTrue(new ParallelCommandGroup(new BeltControl(false), new IntakeMotorControl(false)));
 
@@ -179,6 +189,23 @@ public class RobotContainer {
 
     upButton.onTrue(new SolControl(true));
     downButton.onTrue(new SolControl(false));
+=======
+    RBB.onTrue(new ParallelCommandGroup(new IntakeMotorControl(true, true), new BeltControl(true, true)));
+    RBB.onFalse(new ParallelCommandGroup(new IntakeMotorControl(false, true), new BeltControl(false, true)));
+
+    LBB.onTrue(new SolControl());
+    
+    B4.onTrue(new ShooterControl(0));
+    B4.onTrue(new BeltControl(0));
+    B3.onTrue(new ShooterControl(1));
+    B2.onTrue(new ShooterControl(2));
+    // Reverse
+    B1.onTrue(new BeltControl(1));
+    B1.onTrue(new ShooterControl(3));
+
+    // downbutton.onTrue(new SolControl(false));
+    B7.onTrue(new ChangeLED());
+>>>>>>> Stashed changes
   }
 
   /**

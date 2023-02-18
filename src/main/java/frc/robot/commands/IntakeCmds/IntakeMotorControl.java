@@ -9,11 +9,12 @@ import frc.robot.RobotContainer;
 
 public class IntakeMotorControl extends CommandBase {
   /** Creates a new IntakeMotorControl. */
-  boolean move, end;
-  public IntakeMotorControl(boolean move) {
+  boolean move, isIntake, end;
+  public IntakeMotorControl(boolean move, boolean isIntake) {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(RobotContainer.m_motorsys);
     this.move = move;
+    this.isIntake = isIntake;
     end = false;
   }
 
@@ -26,8 +27,7 @@ public class IntakeMotorControl extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    System.out.println(move);
-    RobotContainer.m_motorsys.set(move);
+    RobotContainer.m_motorsys.set(move, isIntake);
     end = true;
   }
 

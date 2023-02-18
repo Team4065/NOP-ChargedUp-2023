@@ -10,34 +10,33 @@ import frc.robot.RobotContainer;
 public class BeltControl extends CommandBase {
   /** Creates a new BeltControl. */
   int Mode;
-  Boolean on;
-  Boolean Ready; 
-  Boolean End;
+  Boolean on, ready, end, isIntake;
 
-  public BeltControl(Boolean on) {
-      End = false;
-      this.on = on; 
-      Ready = true;
-      addRequirements(RobotContainer.m_belt);
-    }
+  // if you are using belt with intake, pass in isIntake as true
+  public BeltControl(Boolean on, boolean isIntake) {
+    end = false;
+    this.on = on; 
+    this.isIntake = isIntake;
+    ready = true;
+    addRequirements(RobotContainer.m_belt);
+  }
 
-    public BeltControl(int Mode) {
-      End = false;
-      this.Mode = Mode;
-      Ready = false;
-      addRequirements(RobotContainer.m_belt);
-    
-    }
+  public BeltControl(int Mode) {
+    end = false;
+    this.Mode = Mode;
+    ready = false;
+    addRequirements(RobotContainer.m_belt);
+  }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    if(Ready){
-      RobotContainer.m_belt.set(on);
+    if (ready) {
+      RobotContainer.m_belt.set(on, isIntake);
     } else {
       RobotContainer.m_belt.set(Mode);
     }
-    End = true;
+    end = true;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -51,6 +50,6 @@ public class BeltControl extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return End;
+    return end;
   }
 }

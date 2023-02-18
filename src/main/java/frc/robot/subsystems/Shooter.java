@@ -42,17 +42,17 @@ public class Shooter extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     if (on) {
-      if(mode == 0){
-        ShooterML.set(Constants.ShooterConstants.Speed1);
+      if(mode == 0) {
+        ShooterML.setVoltage(Constants.ShooterConstants.Speed1);
         
       } else if(mode == 1) {
-        ShooterML.set(Constants.ShooterConstants.Speed2);
+        ShooterML.setVoltage(Constants.ShooterConstants.Speed2);
         
       } else if(mode == 2) {
-        ShooterML.set(Constants.ShooterConstants.Speed3);
+        ShooterML.setVoltage(Constants.ShooterConstants.Speed3);
 
       } else if(mode == 3) {
-        ShooterML.set(Constants.ShooterConstants.SpeedNeg);
+        ShooterML.setVoltage(Constants.ShooterConstants.SpeedNeg);
 
       }
     } else {

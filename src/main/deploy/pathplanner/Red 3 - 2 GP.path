@@ -2,13 +2,13 @@
   "waypoints": [
     {
       "anchorPoint": {
-        "x": 1.8892709968016221,
-        "y": 0.5374665242911069
+        "x": 1.832093706983419,
+        "y": 1.052062132654934
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.8892709968016215,
-        "y": 0.5374665242911069
+        "x": 2.832093706983419,
+        "y": 1.052062132654934
       },
       "holonomicAngle": 0,
       "isReversal": false,
@@ -26,16 +26,16 @@
     },
     {
       "anchorPoint": {
-        "x": 6.612115135785193,
-        "y": 0.54
+        "x": 7.103839828221739,
+        "y": 1.0634975906185762
       },
       "prevControl": {
-        "x": 5.612115135785193,
-        "y": 0.54
+        "x": 6.103839828221739,
+        "y": 1.0634975906185762
       },
       "nextControl": {
-        "x": 5.612115135785193,
-        "y": 0.54
+        "x": 6.103839828221739,
+        "y": 1.0634975906185762
       },
       "holonomicAngle": 0,
       "isReversal": true,
@@ -43,22 +43,20 @@
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
-        "names": [
-          "Stop"
-        ],
+        "names": [],
         "executionBehavior": "parallel",
-        "waitBehavior": "before",
+        "waitBehavior": "none",
         "waitTime": 0
       }
     },
     {
       "anchorPoint": {
-        "x": 2.23233473571084,
-        "y": 0.54
+        "x": 1.5919490897469664,
+        "y": 1.15
       },
       "prevControl": {
-        "x": 3.418462213529275,
-        "y": 0.54
+        "x": 2.598334362642885,
+        "y": 1.1500000000000001
       },
       "nextControl": null,
       "holonomicAngle": 0,
@@ -76,14 +74,21 @@
       }
     }
   ],
-<<<<<<< Updated upstream
-  "maxVelocity": 4.0,
-  "maxAcceleration": 3.0,
-  "isReversed": true,
-=======
-  "maxVelocity": 1.0,
-  "maxAcceleration": 1.0,
-  "isReversed": false,
->>>>>>> Stashed changes
-  "markers": []
+  "maxVelocity": 1.5,
+  "maxAcceleration": 1.3,
+  "isReversed": null,
+  "markers": [
+    {
+      "position": 0.8,
+      "names": [
+        "deployIntake"
+      ]
+    },
+    {
+      "position": 0.8290909090908872,
+      "names": [
+        "stopSys"
+      ]
+    }
+  ]
 }

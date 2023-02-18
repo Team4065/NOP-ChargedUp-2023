@@ -29,10 +29,7 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard
-<<<<<<< Updated upstream
-=======
     CameraServer.startAutomaticCapture();
->>>>>>> Stashed changes
     m_robotContainer = new RobotContainer();
   }
 
@@ -54,7 +51,9 @@ public class Robot extends TimedRobot {
 
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+    RobotContainer.m_drivetrain.setCoastMode();
+  }
 
   @Override
   public void disabledPeriodic() {}
@@ -62,6 +61,7 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
+    RobotContainer.m_drivetrain.setBreakMode();
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
@@ -83,13 +83,12 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+    RobotContainer.m_drivetrain.setBreakMode();
   }
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {
-    // System.out.println("State:" + RobotContainer.m_pne.flagES.get());
-  }
+  public void teleopPeriodic() {}
 
   @Override
   public void testInit() {

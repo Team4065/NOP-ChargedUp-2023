@@ -10,9 +10,9 @@ public class Time extends CommandBase {
   /** Creates a new Time. */
   int time_amount;
   boolean end = false;
-  public Time(int time_amount) {
+  public Time(int time_in_ms) {
     // Use addRequirements() here to declare subsystem dependencies.
-    this.time_amount = time_amount;
+    this.time_amount = time_in_ms;
   }
 
   // Called when the command is initially scheduled.
@@ -28,12 +28,6 @@ public class Time extends CommandBase {
       
     }
     end = true;
-   /* try {
-      Thread.sleep(100);
-    } catch (InterruptedException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    } */
   }
 
   // Called once the command ends or is interrupted.

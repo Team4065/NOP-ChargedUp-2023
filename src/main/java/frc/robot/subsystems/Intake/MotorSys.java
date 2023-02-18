@@ -5,37 +5,31 @@
 package frc.robot.subsystems.Intake;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.Constants;
-<<<<<<< Updated upstream
-=======
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.Belt;
->>>>>>> Stashed changes
 
 public class MotorSys extends SubsystemBase {
   CANSparkMax intakeMotor = new CANSparkMax(Constants.Intake.IntakeMotor, MotorType.kBrushless);
-  boolean move;
+  boolean move, isIntake;
   /** Creates a new MotorSys. */
   public MotorSys() {
+    intakeMotor.setIdleMode(IdleMode.kCoast);
     intakeMotor.setInverted(true);
   }
 
-  public void set(boolean move) {
+  public void set(boolean move, boolean isIntake) {
     this.move = move;
+    this.isIntake = isIntake;
   }
 
   @Override
   public void periodic() {
-<<<<<<< Updated upstream
-    if (move == true) {
-      intakeMotor.set(0.2);
-    } else {
-      intakeMotor.set(0);
-=======
     RobotContainer.downButton = new POVButton(RobotContainer.XboxC, 180);
 
     if (RobotContainer.downButton.getAsBoolean() == false) {
@@ -58,7 +52,6 @@ public class MotorSys extends SubsystemBase {
       }
     } else if (RobotContainer.downButton.getAsBoolean() == true) {
       intakeMotor.set(-0.2);
->>>>>>> Stashed changes
     }
   }
 }

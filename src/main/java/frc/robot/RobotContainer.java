@@ -4,7 +4,6 @@
 
 package frc.robot;
 
-
 import java.util.HashMap;
 import java.util.List;
 
@@ -23,44 +22,47 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.PrintCommand;
+// import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.commands.BeltControl;
+import frc.robot.commands.ChangeLED;
 import frc.robot.commands.ShooterControl;
+import frc.robot.commands.Drivetrain.AutoBalance;
 import frc.robot.commands.Drivetrain.ChangeSpeed;
+import frc.robot.commands.Drivetrain.GetOnRamp;
 import frc.robot.commands.Drivetrain.TankDrive;
 import frc.robot.commands.Drivetrain.ToggleDirection;
+import frc.robot.commands.IntakeCmds.CustomSolControl;
 import frc.robot.commands.IntakeCmds.IntakeMotorControl;
 import frc.robot.commands.IntakeCmds.SolControl;
-// import frc.robot.commands.IntakeCmds.SolControl;
 import frc.robot.commands.Utils.Time;
 import frc.robot.subsystems.Belt;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Intake.AirSys;
 import frc.robot.subsystems.Intake.MotorSys;
 
 /**
- * This class is where the bulk of the robot should be declared. Since Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
- * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
+ * This class is where the bulk of the robot should be declared. Since
+ * Command-based is a
+ * "declarative" paradigm, very little robot logic should actually be handled in
+ * the {@link Robot}
+ * periodic methods (other than the scheduler calls). Instead, the structure of
+ * the robot (including
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-<<<<<<< Updated upstream
-  // The robot's subsystems and commands are defined here...
-
-=======
->>>>>>> Stashed changes
   public final static DriveTrain m_drivetrain = new DriveTrain();
   public final static Shooter m_shooter = new Shooter(2);
   public final static Belt m_belt = new Belt(0);
   public final static Elevator m_elevator = new Elevator();
   public final static AirSys m_airsys = new AirSys();
   public final static MotorSys m_motorsys = new MotorSys();
+  public final static LEDs m_leds = new LEDs();
 
   // Controller
   public static Joystick XboxC = new Joystick(0);
@@ -79,63 +81,70 @@ public class RobotContainer {
   // D-pad
   public static POVButton upButton = new POVButton(XboxC, 0);
   public static POVButton downButton = new POVButton(XboxC, 180);
-<<<<<<< Updated upstream
-=======
   public static POVButton rightButton = new POVButton(XboxC, 90);
   public static POVButton leftButton = new POVButton(XboxC, 270);
-  
->>>>>>> Stashed changes
 
   // Buttons from the buttonbox
   public static JoystickButton B1 = new JoystickButton(buttonBox, 11);
   public static JoystickButton B2 = new JoystickButton(buttonBox, 10);
   public static JoystickButton B3 = new JoystickButton(buttonBox, 9);
   public static JoystickButton B4 = new JoystickButton(buttonBox, 8);
-  
+  public static JoystickButton B5 = new JoystickButton(buttonBox, 7);
+  public static JoystickButton B6 = new JoystickButton(buttonBox, 6);
+  public static JoystickButton B7 = new JoystickButton(buttonBox, 12);
+
   public static SendableChooser<Command> m_chooser = new SendableChooser<>();
 
   public Command ramAutoBuilder(String pathName, HashMap<String, Command> eventMap) {
     // PathPlanner AutoBuilder, builds a full autonomous command
-    RamseteAutoBuilder testRouteBuilder = new RamseteAutoBuilder(
-      m_drivetrain::getPose,
-      m_drivetrain::resetOdometery,
-      new RamseteController(Constants.AutoConstants.kRamseteB, Constants.AutoConstants.kRamseteZeta),
-      Constants.DriveConstants.kDriveKinematics,
-      new SimpleMotorFeedforward(
-        Constants.AutoConstants.ksVolts,
-        Constants.AutoConstants.kaVoltSecondsSquaredPerMeter,
-        Constants.AutoConstants.kvVoltSecondsPerMeter
-      ),
-      m_drivetrain::getWheelSpeeds,
-      new PIDConstants(Constants.AutoConstants.kPDriveVel, 0, 0),
-      m_drivetrain::tankDriveVolts,
-      eventMap,
-      m_drivetrain
-    );
-    List<PathPlannerTrajectory> pathToFollow = PathPlanner.loadPathGroup(pathName, PathPlanner.getConstraintsFromPath(pathName));
-    final Command auto = testRouteBuilder.fullAuto(pathToFollow);
+    RamseteAutoBuilder pathBuilder = new RamseteAutoBuilder(
+        m_drivetrain::getPose,
+        m_drivetrain::resetOdometery,
+        new RamseteController(Constants.AutoConstants.kRamseteB, Constants.AutoConstants.kRamseteZeta),
+        Constants.DriveConstants.kDriveKinematics,
+        new SimpleMotorFeedforward(
+            Constants.AutoConstants.ksVolts,
+            Constants.AutoConstants.kvVoltSecondsPerMeter,
+            Constants.AutoConstants.kaVoltSecondsSquaredPerMeter),
+        m_drivetrain::getWheelSpeeds,
+        new PIDConstants(Constants.AutoConstants.kPDriveVel, 0, 0),
+        m_drivetrain::tankDriveVolts,
+        eventMap,
+        true,
+        m_drivetrain);
+
+    List<PathPlannerTrajectory> pathToFollow = PathPlanner.loadPathGroup(pathName,
+        PathPlanner.getConstraintsFromPath(pathName));
+    final Command auto = pathBuilder.fullAuto(pathToFollow);
     return auto;
   }
 
-  
-  /** The container for the robot. Contains subsystems, OI devices, and commands. */
+  /**
+   * The container for the robot. Contains subsystems, OI devices, and commands.
+   */
   public RobotContainer() {
     // Fill in the HashMap values
-    setTestEventMap();
-    setAnotherTestEventMap();
-    // Configure the button bindings
+    RobotContainer.m_drivetrain.zeroHeading();
+    RobotContainer.m_drivetrain.resetEncoders();
+    setRed3GPMap();
+    setMidMap();
     m_drivetrain.setDefaultCommand(new TankDrive());
 
-    configureButtonBindings();
+    configureButtonBindings(); // Configure the button bindings
     Shuffleboard.getTab("Auto").add(m_chooser);
     m_chooser.setDefaultOption("Nothing", new InstantCommand());
-    m_chooser.addOption("Test", ramAutoBuilder("test", Constants.AutoConstants.testEventMap));
-    m_chooser.addOption("Another Test", ramAutoBuilder("anotherTest", Constants.AutoConstants.anotherTestEventMap));
+    m_chooser.addOption("Red 3 - 2 Game Pieces",
+        ramAutoBuilder("Red 3 - 2 GP", Constants.AutoConstants.red3GPEventMap));
+    m_chooser.addOption("Middle", ramAutoBuilder("Mid", Constants.AutoConstants.mid));
+    m_chooser.addOption("Balance test", new SequentialCommandGroup(
+        new GetOnRamp(), 
+        new AutoBalance()
+    ));
   }
 
   public static double getDeadZone(int axis) {
     double rawAxisValue = Double.valueOf(XboxC.getRawAxis(axis));
-    if (rawAxisValue >= 0.08 || rawAxisValue <= -0.08) { 
+    if (rawAxisValue >= 0.08 || rawAxisValue <= -0.08) {
       Math.round(rawAxisValue * 100 / 100);
     } else {
       rawAxisValue = 0.0;
@@ -143,58 +152,58 @@ public class RobotContainer {
 
     return -rawAxisValue;
   }
-  
 
-  public void setTestEventMap() {
-    Constants.AutoConstants.testEventMap.put("Start", new InstantCommand());
-    Constants.AutoConstants.testEventMap.put("Stop", new SequentialCommandGroup(
-      new ParallelCommandGroup(new ShooterControl(true), new BeltControl(true)),
-      new Time(1000),
-      new ParallelCommandGroup(new ShooterControl(false), new BeltControl(false))
-    ));
+  public void setRed3GPMap() {
+    Constants.AutoConstants.red3GPEventMap.put("Start", new SequentialCommandGroup(
+        new SequentialCommandGroup(new ShooterControl(true), new Time(100), new BeltControl(true, false)),
+        new Time(1000),
+        new ParallelCommandGroup(new ShooterControl(false), new BeltControl(false, false))));
+    Constants.AutoConstants.red3GPEventMap.put("deployIntake", new SequentialCommandGroup(
+        new CustomSolControl(true),
+        new ParallelCommandGroup(new BeltControl(true, false), new IntakeMotorControl(true, false)),
+        new Time(1100),
+        new ParallelCommandGroup(new BeltControl(false, false), new IntakeMotorControl(false, false)),
+        new CustomSolControl(false)));
+    Constants.AutoConstants.red3GPEventMap.put("Stop", new SequentialCommandGroup(
+        new ShooterControl(1),
+        new ParallelCommandGroup(new ShooterControl(true), new BeltControl(true, false)),
+        new Time(1000),
+        new ParallelCommandGroup(new ShooterControl(false), new BeltControl(false, false))));
   }
 
-  public void setAnotherTestEventMap() {
-    Constants.AutoConstants.anotherTestEventMap.put("Start", new PrintCommand("Start"));
-    Constants.AutoConstants.anotherTestEventMap.put("Stop", new SequentialCommandGroup(
-      new ParallelCommandGroup(new ShooterControl(true), new BeltControl(true)),
-      new Time(1000),
-      new ParallelCommandGroup(new ShooterControl(false), new BeltControl(false))
-    ));
+  public void setMidMap() {
+    Constants.AutoConstants.mid.put("Start", new SequentialCommandGroup(
+        new SequentialCommandGroup(new ShooterControl(true), new Time(100), new BeltControl(true, false)),
+        new Time(1000),
+        new ParallelCommandGroup(new ShooterControl(false), new BeltControl(false, false))));
+    Constants.AutoConstants.mid.put("Stop", new SequentialCommandGroup(
+        new GetOnRamp(),
+        new AutoBalance()));
   }
 
   /**
-   * Use this method to define your button->command mappings. Buttons can be created by 
+   * Use this method to define your button->command mappings. Buttons can be
+   * created by
    * instantiating a {@link GenericHID} or one of its subclasses ({@link
-   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
+   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing
+   * it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    B1.onTrue(new ChangeSpeed(1));
-    B2.onTrue(new ChangeSpeed(0.75));
-    B3.onTrue(new ChangeSpeed(0.5));
+    YB.onTrue(new ChangeSpeed(0.75));
+    XB.onTrue(new ChangeSpeed(0.6));
+    AB.onTrue(new ChangeSpeed(0.45));
 
-    B4.onTrue(new ToggleDirection());
+    BB.onTrue(new ToggleDirection());
 
-    RBB.onTrue(new ParallelCommandGroup(new ShooterControl(true), new BeltControl(true)));
-    RBB.onFalse(new ParallelCommandGroup(new ShooterControl(false), new BeltControl(false)));
+    B5.onTrue(new ParallelCommandGroup(new ShooterControl(true), new BeltControl(true, false)));
+    B5.onFalse(new ParallelCommandGroup(new ShooterControl(false), new BeltControl(false, false)));
 
-<<<<<<< Updated upstream
-    LBB.onTrue(new ParallelCommandGroup(new BeltControl(true), new IntakeMotorControl(true)));
-    LBB.onTrue(new ParallelCommandGroup(new BeltControl(false), new IntakeMotorControl(false)));
-
-    AB.onTrue(new ShooterControl(0));
-    XB.onTrue(new ShooterControl(1));
-    YB.onTrue(new ShooterControl(2));
-
-    upButton.onTrue(new SolControl(true));
-    downButton.onTrue(new SolControl(false));
-=======
     RBB.onTrue(new ParallelCommandGroup(new IntakeMotorControl(true, true), new BeltControl(true, true)));
     RBB.onFalse(new ParallelCommandGroup(new IntakeMotorControl(false, true), new BeltControl(false, true)));
 
     LBB.onTrue(new SolControl());
-    
+
     B4.onTrue(new ShooterControl(0));
     B4.onTrue(new BeltControl(0));
     B3.onTrue(new ShooterControl(1));
@@ -205,7 +214,6 @@ public class RobotContainer {
 
     // downbutton.onTrue(new SolControl(false));
     B7.onTrue(new ChangeLED());
->>>>>>> Stashed changes
   }
 
   /**

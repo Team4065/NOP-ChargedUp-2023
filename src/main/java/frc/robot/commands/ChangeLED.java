@@ -2,17 +2,16 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands.IntakeCmds;
+package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.RobotContainer;
+import frc.robot.subsystems.LEDs;
 
-public class SolControl extends CommandBase {
-  /** Creates a new SolControl. */
+public class ChangeLED extends CommandBase {
+  /** Creates a new ChangeLED. */
   boolean end;
-  public SolControl() {
+  public ChangeLED() {
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(RobotContainer.m_airsys);
     end = false;
   }
 
@@ -23,7 +22,11 @@ public class SolControl extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    RobotContainer.m_airsys.toggleSol();
+    if (LEDs.gameObject == true) {
+      LEDs.gameObject = false;
+    } else if (LEDs.gameObject == false) {
+      LEDs.gameObject = true;
+    }
     end = true;
   }
 
@@ -34,6 +37,6 @@ public class SolControl extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return true;
+    return end;
   }
 }

@@ -23,7 +23,6 @@ import frc.robot.Constants;
 import java.util.List;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
@@ -53,7 +52,7 @@ public class DriveTrain extends SubsystemBase {
   MotorControllerGroup rightSideDrive = new MotorControllerGroup(rightM, rightS);
 
   DifferentialDrive diffDrive;
-  public static Gyro g_gyro = new AHRS(SPI.Port.kMXP);
+  public static AHRS g_gyro = new AHRS(SPI.Port.kMXP);
   private final DifferentialDriveOdometry m_odometry;
   public Field2d m_field = new Field2d();
 
@@ -61,16 +60,11 @@ public class DriveTrain extends SubsystemBase {
   public static double percentOutput; // This variable controls the percent output
   public static boolean isReversed;
 
+
   /** Creates a new DriveTrain. */
   public DriveTrain() {
     g_gyro.reset();
 
-<<<<<<< Updated upstream
-    rightM.configOpenloopRamp(0.4);
-    leftM.configOpenloopRamp(0.4);
-    rightS.configOpenloopRamp(0.4);
-    leftM.configOpenloopRamp(0.4);
-=======
     rightM.configFactoryDefault();
     leftM.configFactoryDefault();
     rightS.configFactoryDefault();
@@ -82,7 +76,10 @@ public class DriveTrain extends SubsystemBase {
     // leftS.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 35, 80, 0.75));
 
     // Set accleration and decleration to 1 second, it will take 1 second to go full throttle
->>>>>>> Stashed changes
+    rightM.configOpenloopRamp(0.4);
+    leftM.configOpenloopRamp(0.4);
+    rightS.configOpenloopRamp(0.4);
+    rightS.configOpenloopRamp(0.4);
 
     leftS.follow(leftM);
     rightS.follow(rightM);
@@ -92,23 +89,19 @@ public class DriveTrain extends SubsystemBase {
     leftM.setInverted(true);
     leftS.setInverted(true);
 
-    percentOutput = 0.5;
-    isReversed = false;
+    percentOutput = 0.6;
+    // isReversed = false;
 
-<<<<<<< Updated upstream
     // leftM.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
     // rightM.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
-=======
-    leftM.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
-    rightM.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
-    leftS.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
-    rightS.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
->>>>>>> Stashed changes
+    // leftS.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
+    // rightS.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
     
-    fxConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.IntegratedSensor;
+    // fxConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.IntegratedSensor;
 
     resetEncoders();
-    setBreakMode();
+    setBreakMode(); 
+    zeroHeading();
 
     diffDrive = new DifferentialDrive(leftSideDrive, rightSideDrive);
 
@@ -132,13 +125,9 @@ public class DriveTrain extends SubsystemBase {
 
     SmartDashboard.putNumber("Left encoder values (Meters)", getLeftEncoderPosition());
     SmartDashboard.putNumber("Right encoder values (Meters)", getRightEncoderPosition());
-    SmartDashboard.putNumber("Right velocity", getRightEncoderVelocity());
-    SmartDashboard.putNumber("Left velocity", getLeftEncoderVelocity());
-    SmartDashboard.putNumber("Gyro heading", getHeading());
-    SmartDashboard.putNumber("Right encoder", rightM.getSelectedSensorPosition());
-    SmartDashboard.putNumber("Left encoder", leftM.getSelectedSensorPosition());
     SmartDashboard.putBoolean("Reversed", isReversed);
     SmartDashboard.putNumber("Percent Speed", percentOutput);
+    SmartDashboard.putNumber("Pitch", getPitch());
     m_field.setRobotPose(getPose());
   }
 
@@ -147,12 +136,19 @@ public class DriveTrain extends SubsystemBase {
     m_field.getObject("Field").setTrajectory(path.get(0));
   }
 
-  public void setRight(ControlMode controlmode, double value){
-    rightM.set(controlmode, -value);
+  public void changeRamp(double rate) {
+    rightM.configOpenloopRamp(rate);
+    leftM.configOpenloopRamp(rate);
+    rightS.configOpenloopRamp(rate);
+    rightS.configOpenloopRamp(rate);
   }
 
-  public void setLeft(ControlMode controlmode, double value){
-    leftM.set(controlmode, value);
+  public void setRight(ControlMode controlmode, double value) {
+    rightM.set(ControlMode.PercentOutput, value);
+  }
+
+  public void setLeft(ControlMode controlmode, double value) {
+    leftM.set(ControlMode.PercentOutput, value);
   }
 
   // This method can be used to convert encoder ticks to meters 
@@ -165,7 +161,7 @@ public class DriveTrain extends SubsystemBase {
 
 
   public void tankDrive(double leftSpeed, double rightSpeed) {
-    setCoastMode();
+    setBreakMode();
     diffDrive.tankDrive(leftSpeed, rightSpeed);
   }
 
@@ -174,7 +170,6 @@ public class DriveTrain extends SubsystemBase {
     rightM.setNeutralMode(NeutralMode.Brake);
     leftS.setNeutralMode(NeutralMode.Brake);
     rightS.setNeutralMode(NeutralMode.Brake);
-
   }
 
   public void setCoastMode() {
@@ -208,6 +203,10 @@ public class DriveTrain extends SubsystemBase {
     return encoderTicksToMeters(leftM.getSelectedSensorVelocity()) * 10;
   }
 
+  public double getPitch() {
+    return g_gyro.getRoll();
+  }
+
   public double getTurnRate() {
     return -g_gyro.getRate();
   }
@@ -222,7 +221,6 @@ public class DriveTrain extends SubsystemBase {
 
   public void resetOdometery(Pose2d pose) {
     resetEncoders();
-    zeroHeading();
     m_odometry.resetPosition(
       g_gyro.getRotation2d(),
       encoderTicksToMeters(leftM.getSelectedSensorPosition()),
@@ -245,13 +243,6 @@ public class DriveTrain extends SubsystemBase {
     return (getLeftEncoderPosition() + getRightEncoderPosition()) / 2.0;
   }
 
-  // public RelativeEncoder getLeftEncoder() {
-  //   return rightM.get;
-  // }
-
-  // public RelativeEncoder getRightEncoder() {
-  //   return rightEncoder;
-  // }
 
   public void setMaxOutputOfDrive(double maxOut) {
     diffDrive.setMaxOutput(maxOut);

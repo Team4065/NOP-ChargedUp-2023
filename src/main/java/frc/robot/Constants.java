@@ -8,6 +8,7 @@ package frc.robot;
 =======
 import java.util.HashMap;
 
+
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.I2C;
@@ -44,15 +45,22 @@ public final class Constants {
    public static final class ShooterConstants {
       public static final int ShooterMotorRCAN = 17;
       public static final int ShooterMotorLCAN = 12;
+<<<<<<< Updated upstream
       public static final double Speed1 = 0.2;
       public static final double Speed2 = 0.6;
       public static final double Speed3 = 1;
       public static final double SpeedNeg = -0.2;  
+=======
+      public static final double Speed1 = 3.5;
+      public static final double Speed2 = 7;
+      public static final double Speed3 = 10.54;
+      public static final double SpeedNeg = -3.5;  
+>>>>>>> Stashed changes
    }
 
    public static final class BeltConstants {
       public static final int BeltMotorCAN = 13;
-      public static final double BeltSpeed = 0.75;
+      public static final double BeltSpeed = 0.8;
       public static final double NegBeltSped = -0.5;
    }
 
@@ -75,8 +83,22 @@ public final class Constants {
 
       public static final double kEncoderFullRev = 2048;
       
+<<<<<<< Updated upstream
       public static final HashMap<String, Command> testEventMap = new HashMap<>();
       public static final HashMap<String, Command> anotherTestEventMap = new HashMap<>();
+=======
+      public static final HashMap<String, Command> red3GPEventMap = new HashMap<>();
+      public static final HashMap<String, Command> mid = new HashMap<>();
+      public static final HashMap<String, Command> red3GPABEventMap = new HashMap<>();
+      public static final HashMap<String, Command> red1GPEventMap = new HashMap<>();
+      public static final HashMap<String, Command> red1GPABEventMap = new HashMap<>();
+
+      // Auto balance
+      public static final double onRampGyro = 20;
+      public static final double balancedGyro = 0;
+      public static final double backwardsBalancingPower = 1.35;
+      public static final double acceptableAngleRange = 2.5;
+>>>>>>> Stashed changes
    }
 
    public static final class Other {

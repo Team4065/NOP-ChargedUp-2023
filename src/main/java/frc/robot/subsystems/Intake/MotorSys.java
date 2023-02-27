@@ -39,11 +39,29 @@ public class MotorSys extends SubsystemBase {
         intakeMotor.set(0);
       } else {
         if (move == true) {
-          intakeMotor.set(0.2);
+          intakeMotor.setVoltage(3.5);
         } else {
+<<<<<<< Updated upstream
           intakeMotor.set(0);
         }
       }
+=======
+            intakeMotor.setVoltage(0);
+        }
+      } else {
+        if (Belt.detectedColor.blue > Constants.Other.detectThreshold) {
+          intakeMotor.setVoltage(0);
+        } else {
+          if (move == true) {
+            intakeMotor.setVoltage(3.5);
+          } else {
+              intakeMotor.setVoltage(0);
+          }
+        }
+      }
+    } else if (RobotContainer.downButton.getAsBoolean() == true) {
+      intakeMotor.setVoltage(-3.5);
+>>>>>>> Stashed changes
     }
   }
 }

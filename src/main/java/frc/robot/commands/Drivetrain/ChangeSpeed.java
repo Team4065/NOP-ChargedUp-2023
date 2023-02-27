@@ -25,12 +25,16 @@ public class ChangeSpeed extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+<<<<<<< Updated upstream
     DriveTrain.percentOutput = setPercentOutput;
     if (setPercentOutput == 0.75) {
       RobotContainer.m_drivetrain.changeRate(0.8);
     } else {
       RobotContainer.m_drivetrain.changeRate(0.4);
     }
+=======
+    DriveTrain.speed = setPercentOutput;
+>>>>>>> Stashed changes
     end = true;
   }
 

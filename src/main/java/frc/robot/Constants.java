@@ -71,9 +71,14 @@ public final class Constants {
 
       // Auto balance
       public static final double onRampGyro = 19;
+<<<<<<< Updated upstream
       public static final double balancedGyro = 0.38;
       public static final double backwardsBalancingPower = 1.35;
       public static final double acceptableAngleRange = 2.5;
+=======
+      public static final double balancedGyro = 0;
+      public static final double acceptableAngleRange = 3;
+>>>>>>> Stashed changes
    }
 
    public static final class Other {

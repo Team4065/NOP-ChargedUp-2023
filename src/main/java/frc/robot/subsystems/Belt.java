@@ -12,6 +12,10 @@ import com.revrobotics.ColorSensorV3;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+<<<<<<< Updated upstream
+=======
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+>>>>>>> Stashed changes
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
@@ -59,10 +63,13 @@ public class Belt extends SubsystemBase {
         if (on) {
           if (mode == 0) {
             BeltMotor.set(ControlMode.PercentOutput, Constants.BeltConstants.BeltSpeed); 
+<<<<<<< Updated upstream
     
           } else if(mode == 1) {
             BeltMotor.set(ControlMode.PercentOutput, Constants.BeltConstants.NegBeltSped);
     
+=======
+>>>>>>> Stashed changes
           }
         } else {
           BeltMotor.set(ControlMode.PercentOutput, 0);
@@ -88,8 +95,11 @@ public class Belt extends SubsystemBase {
     } else if (RobotContainer.downButton.getAsBoolean() == true) {
       BeltMotor.set(ControlMode.PercentOutput, -0.5);
     }
+<<<<<<< Updated upstream
     
     SmartDashboard.putBoolean("Belt On", on);
     SmartDashboard.putNumber("Belt Speed", BeltMotor.getMotorOutputPercent());
+=======
+>>>>>>> Stashed changes
   }
 }

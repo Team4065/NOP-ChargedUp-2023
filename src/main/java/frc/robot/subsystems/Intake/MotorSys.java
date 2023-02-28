@@ -37,7 +37,11 @@ public class MotorSys extends SubsystemBase {
         if (move == true) {
           intakeMotor.set(0.2);
         } else {
+<<<<<<< Updated upstream
             intakeMotor.set(0);
+=======
+            intakeMotor.setVoltage(0);
+>>>>>>> Stashed changes
         }
       } else {
         if (Belt.detectedColor.blue > Constants.Other.detectThreshold) {
@@ -51,7 +55,11 @@ public class MotorSys extends SubsystemBase {
         }
       }
     } else if (RobotContainer.downButton.getAsBoolean() == true) {
+<<<<<<< Updated upstream
       intakeMotor.set(-0.2);
+=======
+      intakeMotor.setVoltage(-3.5);
+>>>>>>> Stashed changes
     }
   }
 }

@@ -22,13 +22,20 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+<<<<<<< Updated upstream
 // import edu.wpi.first.wpilibj2.command.PrintCommand;
+=======
+>>>>>>> Stashed changes
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.commands.BeltControl;
 import frc.robot.commands.ChangeLED;
 import frc.robot.commands.ShooterControl;
+<<<<<<< Updated upstream
+=======
+import frc.robot.commands.Drivetrain.AutoAlign;
+>>>>>>> Stashed changes
 import frc.robot.commands.Drivetrain.AutoBalance;
 import frc.robot.commands.Drivetrain.ChangeSpeed;
 import frc.robot.commands.Drivetrain.GetOnRamp;
@@ -56,6 +63,10 @@ import frc.robot.subsystems.Intake.MotorSys;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
   public final static DriveTrain m_drivetrain = new DriveTrain();
   public final static Shooter m_shooter = new Shooter(2);
   public final static Belt m_belt = new Belt(0);
@@ -93,7 +104,12 @@ public class RobotContainer {
   public static JoystickButton B6 = new JoystickButton(buttonBox, 6);
   public static JoystickButton B7 = new JoystickButton(buttonBox, 12);
 
+<<<<<<< Updated upstream
   public static SendableChooser<Command> m_chooser = new SendableChooser<>();
+=======
+  // Other
+  public static HashMap<Command, String> autoMap = new HashMap<>();
+>>>>>>> Stashed changes
 
   public Command ramAutoBuilder(String pathName, HashMap<String, Command> eventMap) {
     // PathPlanner AutoBuilder, builds a full autonomous command
@@ -131,6 +147,7 @@ public class RobotContainer {
     m_drivetrain.setDefaultCommand(new TankDrive());
 
     configureButtonBindings(); // Configure the button bindings
+<<<<<<< Updated upstream
     Shuffleboard.getTab("Auto").add(m_chooser);
     m_chooser.setDefaultOption("Nothing", new InstantCommand());
     m_chooser.addOption("Red 3 - 2 Game Pieces",
@@ -140,6 +157,28 @@ public class RobotContainer {
         new GetOnRamp(), 
         new AutoBalance()
     ));
+=======
+    Shuffleboard.getTab("Auto").add(m_chooser).withSize(3, 1);
+    Command instantCmd = new InstantCommand();
+    m_chooser.setDefaultOption("Nothing", instantCmd);
+    autoMap.put(instantCmd, "nothing");
+    m_chooser.addOption("Pos 1 - 2 Game Pieces", ramAutoBuilder("Red 1 - 2 GP", Constants.AutoConstants.red1GPEventMap));
+    m_chooser.addOption("Pos 1 - 2 Game Pieces & Auto Balance", ramAutoBuilder("Red 1 - 2 GP AB", Constants.AutoConstants.red1GPABEventMap));
+    m_chooser.addOption("Pos 2 - Preload & Auto Balance", ramAutoBuilder("Mid", Constants.AutoConstants.mid));
+    m_chooser.addOption("Pos 3 - 2 Game Pieces", ramAutoBuilder("Red 3 - 2 GP", Constants.AutoConstants.red3GPEventMap));
+    m_chooser.addOption("Pos 3 - Preload & Auto Balance", ramAutoBuilder("Red 3 - 1 GP AB", Constants.AutoConstants.red3GPABEventMap));
+    
+
+    // Command balanceTestCmd = new SequentialCommandGroup(
+    //   new GetOnRamp(),
+    //   new AutoBalance()
+    // );
+
+    Command balanceTestCmd = new AutoBalance();
+
+    m_chooser.addOption("Balance Test", balanceTestCmd);
+    autoMap.put(balanceTestCmd, "test");
+>>>>>>> Stashed changes
   }
 
   public static double getDeadZone(int axis) {
@@ -155,6 +194,37 @@ public class RobotContainer {
 
   public void setRed3GPMap() {
     Constants.AutoConstants.red3GPEventMap.put("Start", new SequentialCommandGroup(
+<<<<<<< Updated upstream
+=======
+        new SequentialCommandGroup(new ShooterControl(true), new Time(100), new BeltControl(true, false)),
+        new Time(1000),
+        new ParallelCommandGroup(new ShooterControl(false), new BeltControl(false, false))));
+    Constants.AutoConstants.red3GPEventMap.put("deployIntake", new SequentialCommandGroup(
+        new CustomSolControl(true),
+        new ParallelCommandGroup(new BeltControl(true, false), new IntakeMotorControl(true, false)),
+        new Time(1100),
+        new ParallelCommandGroup(new BeltControl(false, false), new IntakeMotorControl(false, false)),
+        new CustomSolControl(false)));
+    Constants.AutoConstants.red3GPEventMap.put("Stop", new SequentialCommandGroup(
+        new ShooterControl(1),
+        new ParallelCommandGroup(new ShooterControl(true), new BeltControl(true, false)),
+        new Time(1000),
+        new ParallelCommandGroup(new ShooterControl(false), new BeltControl(false, false))));
+  }
+
+  public void setMidMap() {
+    Constants.AutoConstants.mid.put("Start", new SequentialCommandGroup(
+        new SequentialCommandGroup(new ShooterControl(true), new Time(100), new BeltControl(true, false)),
+        new Time(1000),
+        new ParallelCommandGroup(new ShooterControl(false), new BeltControl(false, false))));
+    Constants.AutoConstants.mid.put("Stop", new SequentialCommandGroup(
+        new GetOnRamp(),
+        new AutoBalance()));
+  }
+
+  public void setRed3GPABMap() {
+    Constants.AutoConstants.red3GPABEventMap.put("Start", new SequentialCommandGroup(
+>>>>>>> Stashed changes
         new SequentialCommandGroup(new ShooterControl(true), new Time(100), new BeltControl(true, false)),
         new Time(1000),
         new ParallelCommandGroup(new ShooterControl(false), new BeltControl(false, false))));
@@ -223,6 +293,9 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return m_chooser.getSelected();
+<<<<<<< Updated upstream
     // return new InstantCommand();
+=======
+>>>>>>> Stashed changes
   }
 }

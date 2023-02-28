@@ -24,7 +24,11 @@ public class ChangeSpeed extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+<<<<<<< Updated upstream
     DriveTrain.percentOutput = setPercentOutput;
+=======
+    DriveTrain.speed = setPercentOutput;
+>>>>>>> Stashed changes
     end = true;
   }
 

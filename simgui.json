@@ -56,10 +56,18 @@
   "NTProvider": {
     "types": {
       "/FMSInfo": "FMSInfo",
+      "/Shuffleboard/AUTON/Field": "Field2d",
+      "/Shuffleboard/AUTON/SendableChooser[0]": "String Chooser",
+      "/Shuffleboard/Auto/Field": "Field2d",
       "/Shuffleboard/Auto/SendableChooser[0]": "String Chooser",
       "/Shuffleboard/Field/Field": "Field2d"
     },
     "windows": {
+      "/Shuffleboard/Auto/SendableChooser[0]": {
+        "window": {
+          "visible": true
+        }
+      },
       "/Shuffleboard/Field/Field": {
         "Field": {
           "arrowSize": 19,

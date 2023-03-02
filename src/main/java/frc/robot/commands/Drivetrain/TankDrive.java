@@ -21,13 +21,15 @@ public class TankDrive extends CommandBase {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    RobotContainer.m_drivetrain.setBreakMode();
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    Double RJY = RobotContainer.getDeadZone(1) * DriveTrain.percentOutput;
-    Double LJY = RobotContainer.getDeadZone(5) * DriveTrain.percentOutput;
+    Double RJY = RobotContainer.getDeadZone(1) * DriveTrain.speed;
+    Double LJY = RobotContainer.getDeadZone(5) * DriveTrain.speed;
 
     if (DriveTrain.isReversed == false) {
       RobotContainer.m_drivetrain.tankDrive(RJY, LJY);

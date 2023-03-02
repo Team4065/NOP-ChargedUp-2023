@@ -4,9 +4,6 @@
 
 package frc.robot;
 
-<<<<<<< Updated upstream
-import edu.wpi.first.cameraserver.CameraServer;
-=======
 import java.util.Map;
 
 import edu.wpi.first.cameraserver.CameraServer;
@@ -14,10 +11,12 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
->>>>>>> Stashed changes
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.commands.Drivetrain.AutoBalance;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -30,13 +29,10 @@ public class Robot extends TimedRobot {
 
   private RobotContainer m_robotContainer;
 
-<<<<<<< Updated upstream
-
-=======
   public static final ShuffleboardTab mainTab = Shuffleboard.getTab("VALUES");
 
 
-  ShuffleboardTab autoTab = Shuffleboard.getTab("Auto");
+  ShuffleboardTab autoTab = Shuffleboard.getTab("AUTON");
   GenericEntry allianceColor = 
     autoTab.add("ALLIANCE", true) 
       .withProperties(Map.of("colorWhenTrue", "blue"))
@@ -44,7 +40,6 @@ public class Robot extends TimedRobot {
       .withSize(3, 1)
       .getEntry();
 
->>>>>>> Stashed changes
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -53,12 +48,8 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard
-<<<<<<< Updated upstream
-=======
     m_robotContainer = new RobotContainer();
->>>>>>> Stashed changes
     CameraServer.startAutomaticCapture();
-    m_robotContainer = new RobotContainer();
   }
 
   /**
@@ -80,18 +71,6 @@ public class Robot extends TimedRobot {
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
   public void disabledInit() {
-<<<<<<< Updated upstream
-    RobotContainer.m_drivetrain.setCoastMode();
-  }
-
-  @Override
-  public void disabledPeriodic() {}
-
-  /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
-  @Override
-  public void autonomousInit() {
-    RobotContainer.m_drivetrain.setBreakMode();
-=======
     // TO-DO: REMOVE THIS LINE AND CHANGE IT TO BRAKE MODE
     AutoBalance.stop = true; // AUTO BALANCE SAFETY NET! DO NOT REMOVE
   }
@@ -121,11 +100,11 @@ public class Robot extends TimedRobot {
     RobotContainer.m_drivetrain.resetEncoders();
     RobotContainer.m_drivetrain.zeroHeading();
     RobotContainer.m_drivetrain.resetOdometery(new Pose2d(0, 0, new Rotation2d()));
->>>>>>> Stashed changes
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
+      System.out.println("reached");
       m_autonomousCommand.schedule();
     }
   }
@@ -143,7 +122,6 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
-    RobotContainer.m_drivetrain.setBreakMode();
   }
 
   /** This function is called periodically during operator control. */

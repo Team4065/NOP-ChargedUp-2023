@@ -4,29 +4,31 @@
 
 package frc.robot.subsystems;
 
+import java.util.List;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-
-import java.util.List;
-
+import frc.robot.Robot;
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.kauailabs.navx.frc.AHRS;
+import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 
 
@@ -40,12 +42,13 @@ public class DriveTrain extends SubsystemBase {
   // CANSparkMax rightMotor = new CANSparkMax(Constants.rightMotor, MotorType.kBrushless);
 
   // Create our motor instances
-  WPI_TalonFX leftM = new WPI_TalonFX(Constants.DriveConstants.LeftMaster);
-  WPI_TalonFX leftS = new WPI_TalonFX(Constants.DriveConstants.LeftSlave);
-  WPI_TalonFX rightM = new WPI_TalonFX(Constants.DriveConstants.RightMaster);
-  WPI_TalonFX rightS = new WPI_TalonFX(Constants.DriveConstants.RightSlave);
+  public static WPI_TalonFX leftM = new WPI_TalonFX(Constants.DriveConstants.LeftMaster);
+  public static WPI_TalonFX leftS = new WPI_TalonFX(Constants.DriveConstants.LeftSlave);
+  public static WPI_TalonFX rightM = new WPI_TalonFX(Constants.DriveConstants.RightMaster);
+  public static WPI_TalonFX rightS = new WPI_TalonFX(Constants.DriveConstants.RightSlave);
 
   private final TalonFXConfiguration fxConfig = new TalonFXConfiguration(); 
+
 
   // Create motor control groups so it's easier to manage
   MotorControllerGroup leftSideDrive = new MotorControllerGroup(leftM, leftS);
@@ -57,9 +60,12 @@ public class DriveTrain extends SubsystemBase {
   public Field2d m_field = new Field2d();
 
   
-  public static double percentOutput; // This variable controls the percent output
-  public static boolean isReversed;
+  public static double speed = 0.6; // This variable controls the percent output
+  public static boolean isReversed = false;
+  
 
+  private GenericEntry isReversedValSB = Robot.mainTab.add("REVERSED", isReversed).withPosition(1, 0).getEntry();
+  private GenericEntry percentSpeedValSB = Robot.mainTab.add("SPEED%", (speed * 100) + "%").withPosition(0, 0).getEntry();
 
   /** Creates a new DriveTrain. */
   public DriveTrain() {
@@ -68,7 +74,7 @@ public class DriveTrain extends SubsystemBase {
     rightM.configFactoryDefault();
     leftM.configFactoryDefault();
     rightS.configFactoryDefault();
-    rightS.configFactoryDefault();
+    leftS.configFactoryDefault();
 
     // rightM.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 35, 80, 0.75));
     // leftM.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 35, 80, 0.75));
@@ -79,29 +85,14 @@ public class DriveTrain extends SubsystemBase {
     rightM.configOpenloopRamp(0.4);
     leftM.configOpenloopRamp(0.4);
     rightS.configOpenloopRamp(0.4);
-<<<<<<< Updated upstream
-    rightS.configOpenloopRamp(0.4);
-=======
     leftS.configOpenloopRamp(0.4);
->>>>>>> Stashed changes
 
-    leftS.follow(leftM);
-    rightS.follow(rightM);
 
     rightM.setInverted(false);
     rightS.setInverted(false);
     leftM.setInverted(true);
     leftS.setInverted(true);
 
-<<<<<<< Updated upstream
-    percentOutput = 0.6;
-    // isReversed = false;
-
-    // leftM.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
-    // rightM.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
-    // leftS.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
-    // rightS.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
-=======
     speed = 0.6;
     // isReversed = false;
 
@@ -109,9 +100,8 @@ public class DriveTrain extends SubsystemBase {
     rightM.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
     leftS.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
     rightS.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
->>>>>>> Stashed changes
     
-    // fxConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.IntegratedSensor;
+    fxConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.IntegratedSensor;
 
     resetEncoders();
     setBreakMode(); 
@@ -125,17 +115,13 @@ public class DriveTrain extends SubsystemBase {
       encoderTicksToMeters(rightM.getSelectedSensorPosition())
     );
 
-<<<<<<< Updated upstream
-    Shuffleboard.getTab("Field").add(m_field);
-=======
     // leftS.follow(leftM);
     // rightS.follow(rightM);
 
     // leftS.configNeutralDeadband(0);
     // rightS.configNeutralDeadband(0);
 
-    Shuffleboard.getTab("Auto").add(m_field).withSize(7, 4).withPosition(3, 0);
->>>>>>> Stashed changes
+    Shuffleboard.getTab("AUTON").add(m_field).withSize(7, 4).withPosition(3, 0);
   }
 
   @Override
@@ -147,17 +133,6 @@ public class DriveTrain extends SubsystemBase {
       encoderTicksToMeters(rightM.getSelectedSensorPosition())
     );
 
-<<<<<<< Updated upstream
-    SmartDashboard.putNumber("Left encoder values (Meters)", getLeftEncoderPosition());
-    SmartDashboard.putNumber("Right encoder values (Meters)", getRightEncoderPosition());
-    SmartDashboard.putBoolean("Reversed", isReversed);
-    SmartDashboard.putNumber("Percent Speed", percentOutput);
-    SmartDashboard.putNumber("Pitch", getPitch());
-    m_field.setRobotPose(getPose());
-  }
-
-  public void showTraj(List<PathPlannerTrajectory> path) {
-=======
     m_field.setRobotPose(getPose());
     isReversedValSB.setBoolean(isReversed);
     percentSpeedValSB.setString((speed * 100) + "%");
@@ -166,13 +141,10 @@ public class DriveTrain extends SubsystemBase {
   public void showTraj(String pathName) {
     List<PathPlannerTrajectory> path = PathPlanner.loadPathGroup(pathName,
     PathPlanner.getConstraintsFromPath(pathName));
->>>>>>> Stashed changes
     m_field.getObject("Field").setTrajectory(new Trajectory());
     m_field.getObject("Field").setTrajectory(path.get(0));
   }
 
-<<<<<<< Updated upstream
-=======
   public void showTraj() {
     m_field.getObject("Field").setTrajectory(new Trajectory());
   }
@@ -193,24 +165,11 @@ public class DriveTrain extends SubsystemBase {
     diffDrive.tankDrive(left, right);
   }
 
->>>>>>> Stashed changes
   public void changeRamp(double rate) {
     rightM.configOpenloopRamp(rate);
     leftM.configOpenloopRamp(rate);
     rightS.configOpenloopRamp(rate);
-<<<<<<< Updated upstream
-    rightS.configOpenloopRamp(rate);
-  }
-
-  public void setRight(ControlMode controlmode, double value) {
-    rightM.set(ControlMode.PercentOutput, value);
-  }
-
-  public void setLeft(ControlMode controlmode, double value) {
-    leftM.set(ControlMode.PercentOutput, value);
-=======
     leftS.configOpenloopRamp(rate);
->>>>>>> Stashed changes
   }
 
   // This method can be used to convert encoder ticks to meters 
@@ -219,12 +178,6 @@ public class DriveTrain extends SubsystemBase {
     double wheelRotations = motorRotations / Constants.DriveConstants.kGearRatio;
     double positionMeters = wheelRotations * Units.inchesToMeters(Constants.DriveConstants.kWheelCircumferenceInches);
     return positionMeters;
-  }
-
-
-  public void tankDrive(double leftSpeed, double rightSpeed) {
-    setBreakMode();
-    diffDrive.tankDrive(leftSpeed, rightSpeed);
   }
 
   public void setBreakMode() {
@@ -266,10 +219,7 @@ public class DriveTrain extends SubsystemBase {
   }
 
   public double getPitch() {
-<<<<<<< Updated upstream
-=======
     // We are getting the roll because the actual "pitch" is the roll becuase of the way navX is mounted
->>>>>>> Stashed changes
     return g_gyro.getRoll();
   }
 

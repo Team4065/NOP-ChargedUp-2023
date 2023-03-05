@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class AirSys extends SubsystemBase {
   Compressor pcmCompressor = new Compressor(0, PneumaticsModuleType.CTREPCM);
-  Solenoid sol = new Solenoid(PneumaticsModuleType.CTREPCM, 0);
+  Solenoid sol = new Solenoid(PneumaticsModuleType.CTREPCM, 7);
   /** Creates a new AirSys. */
   public AirSys() {
     pcmCompressor.enableDigital();
@@ -22,6 +22,7 @@ public class AirSys extends SubsystemBase {
   }
 
   public void toggleSol() {
+    
     sol.toggle();
   }
 

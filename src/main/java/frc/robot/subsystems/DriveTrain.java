@@ -67,6 +67,8 @@ public class DriveTrain extends SubsystemBase {
   private GenericEntry isReversedValSB = Robot.mainTab.add("REVERSED", isReversed).withPosition(1, 0).getEntry();
   private GenericEntry percentSpeedValSB = Robot.mainTab.add("SPEED%", (speed * 100) + "%").withPosition(0, 0).getEntry();
 
+  private GenericEntry pitchValSB = Robot.mainTab.add("PITCH", g_gyro.getRoll()).getEntry();
+
   /** Creates a new DriveTrain. */
   public DriveTrain() {
     g_gyro.reset();
@@ -136,6 +138,7 @@ public class DriveTrain extends SubsystemBase {
     m_field.setRobotPose(getPose());
     isReversedValSB.setBoolean(isReversed);
     percentSpeedValSB.setString((speed * 100) + "%");
+    pitchValSB.setDouble(g_gyro.getRoll());
   }
 
   public void showTraj(String pathName) {
@@ -219,7 +222,7 @@ public class DriveTrain extends SubsystemBase {
   }
 
   public double getPitch() {
-    // We are getting the roll because the actual "pitch" is the roll becuase of the way navX is mounted
+    // We are getting the roll because the actual "pitch" is the roll because of the way navX is mounted
     return g_gyro.getRoll();
   }
 

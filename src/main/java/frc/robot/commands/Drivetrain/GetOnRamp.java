@@ -42,6 +42,7 @@ public class GetOnRamp extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     RobotContainer.m_drivetrain.setBreakMode();
+    RobotContainer.m_drivetrain.tankDrive(0, 0);
   }
 
   // Returns true when the command should end.

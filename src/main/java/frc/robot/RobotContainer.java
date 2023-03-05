@@ -160,7 +160,7 @@ public class RobotContainer {
     //   new AutoBalance()
     // );
 
-    Command balanceTestCmd = new AutoBalance();
+    Command balanceTestCmd = new AutoBalance(0.4);
 
     m_chooser.addOption("Balance Test", balanceTestCmd);
     autoMap.put(balanceTestCmd, "test");
@@ -179,15 +179,15 @@ public class RobotContainer {
 
   public void setRed3GPMap() {
     Constants.AutoConstants.red3GPEventMap.put("Start", new SequentialCommandGroup(
-        new SequentialCommandGroup(new ShooterControl(true), new Time(100), new BeltControl(true, false)),
-        new Time(1000),
-        new ParallelCommandGroup(new ShooterControl(false), new BeltControl(false, false))));
+      new SequentialCommandGroup(new ShooterControl(true), new Time(100), new BeltControl(true, false)),
+      new Time(800),
+      new ParallelCommandGroup(new ShooterControl(false), new BeltControl(false, false)),
+      new CustomSolControl(true),
+      new ParallelCommandGroup(new BeltControl(true, false), new IntakeMotorControl(true, false))));
     Constants.AutoConstants.red3GPEventMap.put("deployIntake", new SequentialCommandGroup(
-        new CustomSolControl(true),
-        new ParallelCommandGroup(new BeltControl(true, false), new IntakeMotorControl(true, false)),
-        new Time(1100),
-        new ParallelCommandGroup(new BeltControl(false, false), new IntakeMotorControl(false, false)),
-        new CustomSolControl(false)));
+      new Time(200),
+      new ParallelCommandGroup(new BeltControl(false, false), new IntakeMotorControl(false, false)),
+      new CustomSolControl(false)));
     Constants.AutoConstants.red3GPEventMap.put("Stop", new SequentialCommandGroup(
         new ShooterControl(1),
         new ParallelCommandGroup(new ShooterControl(true), new BeltControl(true, false)),
@@ -202,7 +202,7 @@ public class RobotContainer {
         new ParallelCommandGroup(new ShooterControl(false), new BeltControl(false, false))));
     Constants.AutoConstants.mid.put("Stop", new SequentialCommandGroup(
         new GetOnRamp(),
-        new AutoBalance()));
+        new AutoBalance(0.39)));
   }
 
   public void setRed3GPABMap() {
@@ -212,7 +212,7 @@ public class RobotContainer {
         new ParallelCommandGroup(new ShooterControl(false), new BeltControl(false, false))));
     Constants.AutoConstants.red3GPABEventMap.put("Stop", new SequentialCommandGroup(
         new GetOnRamp(),
-        new AutoBalance()));
+        new AutoBalance(0.39)));
   }
 
   public void setRed1GPEventMap() {
@@ -222,7 +222,7 @@ public class RobotContainer {
         new ParallelCommandGroup(new ShooterControl(false), new BeltControl(false, false)),
         new CustomSolControl(true),
         new ParallelCommandGroup(new BeltControl(true, false), new IntakeMotorControl(true, false))
-        ));
+    ));
     Constants.AutoConstants.red1GPEventMap.put("deployIntake", new SequentialCommandGroup(
         new Time(600),
         new ParallelCommandGroup(new BeltControl(false, false), new IntakeMotorControl(false, false)),
@@ -243,7 +243,7 @@ public class RobotContainer {
         new ParallelCommandGroup(new BeltControl(true, false), new IntakeMotorControl(true, false))
         ));
     Constants.AutoConstants.red1GPABEventMap.put("deployIntake", new SequentialCommandGroup(
-        new Time(400),
+        new Time(200),
         new ParallelCommandGroup(new BeltControl(false, false), new IntakeMotorControl(false, false)),
         new CustomSolControl(false)));
     Constants.AutoConstants.red1GPABEventMap.put("score2nd", new SequentialCommandGroup(
@@ -254,7 +254,7 @@ public class RobotContainer {
 
     Constants.AutoConstants.red1GPABEventMap.put("Stop", new SequentialCommandGroup(
         new GetOnRamp(),
-        new AutoBalance()));
+        new AutoBalance(0.4)));
   }
 
   /**

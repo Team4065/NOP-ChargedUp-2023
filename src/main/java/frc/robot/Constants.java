@@ -37,7 +37,7 @@ public final class Constants {
       public static final int ShooterMotorRCAN = 17;
       public static final int ShooterMotorLCAN = 12;
       public static final double Speed1 = 3.5;
-      public static final double Speed2 = 7;
+      public static final double Speed2 = 6.7;
       public static final double Speed3 = 10.54;
       public static final double SpeedNeg = -3.5;  
    }
@@ -74,7 +74,7 @@ public final class Constants {
       public static final HashMap<String, Command> red1GPABEventMap = new HashMap<>();
 
       // Auto balance
-      public static final double onRampGyro = 19;
+      public static final double onRampGyro = 17;
       public static final double balancedGyro = 0;
       public static final double acceptableAngleRange = 3;
    }

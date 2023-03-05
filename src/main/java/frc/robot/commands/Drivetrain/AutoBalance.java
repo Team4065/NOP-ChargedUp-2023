@@ -15,10 +15,12 @@ public class AutoBalance extends CommandBase {
   PIDController pid = new PIDController(0.024, 0.001, 0.002);
   double speed;
   double angle;
+  double speedBalance;
   public static boolean stop;
-  public AutoBalance() {
+  public AutoBalance(double speedBalance) {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(RobotContainer.m_drivetrain);
+    this.speedBalance = speedBalance;
   }
 
   // Called when the command is initially scheduled.
@@ -42,9 +44,9 @@ public class AutoBalance extends CommandBase {
     System.out.println("BALANCE: " + speed);
 
     if (speed < -0.5) {
-      RobotContainer.m_drivetrain.tankDrive(0.43, 0.43);
+      RobotContainer.m_drivetrain.tankDrive(speedBalance, speedBalance);
     } else if (speed > 0.5) {
-      RobotContainer.m_drivetrain.tankDrive(-0.43, -0.43);
+      RobotContainer.m_drivetrain.tankDrive(-(speedBalance), -(speedBalance));
     } else {
       RobotContainer.m_drivetrain.tankDrive(-speed, -speed);
     }

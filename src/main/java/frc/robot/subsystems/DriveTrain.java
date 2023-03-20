@@ -138,7 +138,9 @@ public class DriveTrain extends SubsystemBase {
     m_field.setRobotPose(getPose());
     isReversedValSB.setBoolean(isReversed);
     percentSpeedValSB.setString((speed * 100) + "%");
-    pitchValSB.setDouble(g_gyro.getRoll());
+    // pitchValSB.setDouble(g_gyro.getRoll());
+
+    // System.out.println(getHeading());
   }
 
   public void showTraj(String pathName) {

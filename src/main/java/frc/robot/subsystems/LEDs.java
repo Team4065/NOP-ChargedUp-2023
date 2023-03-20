@@ -29,7 +29,7 @@ public class LEDs extends SubsystemBase {
     if (gameObject == true) {
       m_blinkin.set(0.91); // purple
     } else {
-      m_blinkin.set(0.69); // yellow
+      m_blinkin.set(0.77); // green
     }
   }
 }

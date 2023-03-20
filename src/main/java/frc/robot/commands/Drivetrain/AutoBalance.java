@@ -17,10 +17,12 @@ public class AutoBalance extends CommandBase {
   double angle;
   double speedBalance;
   public static boolean stop;
-  public AutoBalance(double speedBalance) {
+  boolean isBatterySide;
+  public AutoBalance(double speedBalance, boolean isBatterySide) {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(RobotContainer.m_drivetrain);
     this.speedBalance = speedBalance;
+    this.isBatterySide = isBatterySide;
   }
 
   // Called when the command is initially scheduled.
@@ -40,6 +42,11 @@ public class AutoBalance extends CommandBase {
   public void execute() {
     angle = RobotContainer.m_drivetrain.getPitch();
     speed = pid.calculate(angle, Constants.AutoConstants.balancedGyro);
+
+    if (isBatterySide == true) {
+      speed *= -1;
+      speedBalance *= -1;
+    }
 
     System.out.println("BALANCE: " + speed);
 

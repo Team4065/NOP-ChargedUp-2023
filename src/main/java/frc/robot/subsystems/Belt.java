@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import java.text.DecimalFormat;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
@@ -57,9 +59,17 @@ public class Belt extends SubsystemBase {
     // This method will be called once per scheduler run
     detectedColor = m_colorSensor.getColor();
     redValSB.setDouble(detectedColor.red);
-    greenValSB.setDouble(detectedColor.red);
-    blueValSB.setDouble(detectedColor.red);
+    greenValSB.setDouble(detectedColor.green);
+    blueValSB.setDouble(detectedColor.blue);
     beltSpeedValSB.setString((BeltMotor.getMotorOutputPercent() * 100) + "%");
+
+    // System.out.println(detectedColor.blue);
+
+    if (detectedColor.blue > Constants.Other.colorDetectThreshold) {
+      LEDs.gameObject = true;
+    } else {
+      LEDs.gameObject = false;
+    }
 
     RobotContainer.downButton = new POVButton(RobotContainer.XboxC, 180);
     RobotContainer.B1 = new JoystickButton(RobotContainer.XboxC, 11);
@@ -76,7 +86,7 @@ public class Belt extends SubsystemBase {
         }
       } else {
         // there was a massive difference of the B val between cube and no cube. if the B is higher than 0.25 (detected), stop the belt
-        if (detectedColor.blue > Constants.Other.detectThreshold) {
+        if (detectedColor.blue > Constants.Other.colorDetectThreshold) {
           BeltMotor.set(ControlMode.PercentOutput, 0);
         } else {
           if (on) {

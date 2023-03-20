@@ -137,6 +137,7 @@ public class RobotContainer {
 
     setRed3GPMap();
     setMidMap();
+    setMidPickMap();
     setRed3GPABMap();
     setRed1GPEventMap();
     setRed1GPABEventMap();
@@ -151,6 +152,7 @@ public class RobotContainer {
     m_chooser.addOption("Pos 1 - 2 Game Pieces", ramAutoBuilder("Red 1 - 2 GP", Constants.AutoConstants.red1GPEventMap));
     m_chooser.addOption("Pos 1 - 2 Game Pieces & Auto Balance", ramAutoBuilder("Red 1 - 2 GP AB", Constants.AutoConstants.red1GPABEventMap));
     m_chooser.addOption("Pos 2 - Preload & Auto Balance", ramAutoBuilder("Mid", Constants.AutoConstants.mid));
+    m_chooser.addOption("Pos 2 - Preload, Pickup & Auto Balance", ramAutoBuilder("Mid & Pickup", Constants.AutoConstants.midPick));
     m_chooser.addOption("Pos 3 - 2 Game Pieces", ramAutoBuilder("Red 3 - 2 GP", Constants.AutoConstants.red3GPEventMap));
     m_chooser.addOption("Pos 3 - Preload & Auto Balance", ramAutoBuilder("Red 3 - 1 GP AB", Constants.AutoConstants.red3GPABEventMap));
     
@@ -160,7 +162,7 @@ public class RobotContainer {
     //   new AutoBalance()
     // );
 
-    Command balanceTestCmd = new AutoBalance(0.4);
+    Command balanceTestCmd = new AutoBalance(0.4, false);
 
     m_chooser.addOption("Balance Test", balanceTestCmd);
     autoMap.put(balanceTestCmd, "test");
@@ -189,72 +191,87 @@ public class RobotContainer {
       new ParallelCommandGroup(new BeltControl(false, false), new IntakeMotorControl(false, false)),
       new CustomSolControl(false)));
     Constants.AutoConstants.red3GPEventMap.put("Stop", new SequentialCommandGroup(
-        new ShooterControl(1),
-        new ParallelCommandGroup(new ShooterControl(true), new BeltControl(true, false)),
-        new Time(1000),
-        new ParallelCommandGroup(new ShooterControl(false), new BeltControl(false, false))));
+      new ShooterControl(1),
+      new ParallelCommandGroup(new ShooterControl(true), new BeltControl(true, false)),
+      new Time(1000),
+      new ParallelCommandGroup(new ShooterControl(false), new BeltControl(false, false))));
   }
 
   public void setMidMap() {
     Constants.AutoConstants.mid.put("Start", new SequentialCommandGroup(
-        new SequentialCommandGroup(new ShooterControl(true), new Time(100), new BeltControl(true, false)),
-        new Time(1000),
-        new ParallelCommandGroup(new ShooterControl(false), new BeltControl(false, false))));
+      new SequentialCommandGroup(new ShooterControl(true), new Time(100), new BeltControl(true, false)),
+      new Time(1000),
+      new ParallelCommandGroup(new ShooterControl(false), new BeltControl(false, false))));
     Constants.AutoConstants.mid.put("Stop", new SequentialCommandGroup(
-        new GetOnRamp(),
-        new AutoBalance(0.39)));
+      new GetOnRamp(false),
+      new AutoBalance(0.39, false)));
+  }
+
+  public void setMidPickMap() {
+    Constants.AutoConstants.midPick.put("Start", new SequentialCommandGroup(
+      new SequentialCommandGroup(new ShooterControl(true), new Time(100), new BeltControl(true, false)),
+      new Time(800),
+      new ParallelCommandGroup(new ShooterControl(false), new BeltControl(false, false)),
+      new CustomSolControl(true),
+      new ParallelCommandGroup(new BeltControl(true, false), new IntakeMotorControl(true, false))));
+    Constants.AutoConstants.midPick.put("stopSys", new SequentialCommandGroup(
+      new Time(200),
+      new ParallelCommandGroup(new BeltControl(false, false), new IntakeMotorControl(false, false)),
+      new CustomSolControl(false)));
+    Constants.AutoConstants.midPick.put("Stop", new SequentialCommandGroup(
+      new GetOnRamp(true),
+      new AutoBalance(0.39, true)));
   }
 
   public void setRed3GPABMap() {
     Constants.AutoConstants.red3GPABEventMap.put("Start", new SequentialCommandGroup(
-        new SequentialCommandGroup(new ShooterControl(true), new Time(100), new BeltControl(true, false)),
-        new Time(1000),
-        new ParallelCommandGroup(new ShooterControl(false), new BeltControl(false, false))));
+      new SequentialCommandGroup(new ShooterControl(true), new Time(100), new BeltControl(true, false)),
+      new Time(1000),
+      new ParallelCommandGroup(new ShooterControl(false), new BeltControl(false, false))));
     Constants.AutoConstants.red3GPABEventMap.put("Stop", new SequentialCommandGroup(
-        new GetOnRamp(),
-        new AutoBalance(0.39)));
+      new GetOnRamp(false),
+      new AutoBalance(0.39, false)));
   }
 
   public void setRed1GPEventMap() {
     Constants.AutoConstants.red1GPEventMap.put("Start", new SequentialCommandGroup(
-        new SequentialCommandGroup(new ShooterControl(true), new Time(100), new BeltControl(true, false)),
-        new Time(800),
-        new ParallelCommandGroup(new ShooterControl(false), new BeltControl(false, false)),
-        new CustomSolControl(true),
-        new ParallelCommandGroup(new BeltControl(true, false), new IntakeMotorControl(true, false))
-    ));
+      new SequentialCommandGroup(new ShooterControl(true), new Time(100), new BeltControl(true, false)),
+      new Time(800),
+      new ParallelCommandGroup(new ShooterControl(false), new BeltControl(false, false)),
+      new CustomSolControl(true),
+      new ParallelCommandGroup(new BeltControl(true, false), new IntakeMotorControl(true, false))));
     Constants.AutoConstants.red1GPEventMap.put("deployIntake", new SequentialCommandGroup(
-        new Time(600),
-        new ParallelCommandGroup(new BeltControl(false, false), new IntakeMotorControl(false, false)),
-        new CustomSolControl(false)));
+      new Time(600),
+      new ParallelCommandGroup(new BeltControl(false, false), new IntakeMotorControl(false, false)),
+      new CustomSolControl(false)));
     Constants.AutoConstants.red1GPEventMap.put("Stop", new SequentialCommandGroup(
-        new ShooterControl(1),
-        new ParallelCommandGroup(new ShooterControl(true), new BeltControl(true, false)),
-        new Time(1000),
-        new ParallelCommandGroup(new ShooterControl(false), new BeltControl(false, false))));
+      new ShooterControl(1),
+      new ParallelCommandGroup(new ShooterControl(true), new BeltControl(true, false)),
+      new Time(1000),
+      new ParallelCommandGroup(new ShooterControl(false), new BeltControl(false, false))));
   }
 
   public void setRed1GPABEventMap() {
     Constants.AutoConstants.red1GPABEventMap.put("Start", new SequentialCommandGroup(
-        new SequentialCommandGroup(new ShooterControl(true), new Time(100), new BeltControl(true, false)),
-        new Time(800),
-        new ParallelCommandGroup(new ShooterControl(false), new BeltControl(false, false)),
-        new CustomSolControl(true),
-        new ParallelCommandGroup(new BeltControl(true, false), new IntakeMotorControl(true, false))
+      new SequentialCommandGroup(new ShooterControl(true), new Time(100), new BeltControl(true, false)),
+      new Time(800),
+      new ParallelCommandGroup(new ShooterControl(false), new BeltControl(false, false)),
+      new CustomSolControl(true),
+      new ParallelCommandGroup(new BeltControl(true, false), new IntakeMotorControl(true, false))
         ));
     Constants.AutoConstants.red1GPABEventMap.put("deployIntake", new SequentialCommandGroup(
-        new Time(200),
-        new ParallelCommandGroup(new BeltControl(false, false), new IntakeMotorControl(false, false)),
-        new CustomSolControl(false)));
+      new Time(200),
+      new ParallelCommandGroup(new BeltControl(false, false), new IntakeMotorControl(false, false)),
+      new CustomSolControl(false)));
     Constants.AutoConstants.red1GPABEventMap.put("score2nd", new SequentialCommandGroup(
-        new ShooterControl(1),
-        new ParallelCommandGroup(new ShooterControl(true), new BeltControl(true, false)),
-        new Time(1000),
-        new ParallelCommandGroup(new ShooterControl(false), new BeltControl(false, false))));
+      new ShooterControl(1),
+      new ParallelCommandGroup(new ShooterControl(true), new BeltControl(true, false)),
+      new Time(1000),
+      new ParallelCommandGroup(new ShooterControl(false), new BeltControl(false, false))));
 
     Constants.AutoConstants.red1GPABEventMap.put("Stop", new SequentialCommandGroup(
-        new GetOnRamp(),
-        new AutoBalance(0.4)));
+      new GetOnRamp(false),
+      new AutoBalance(0.4, false)));
   }
 
   /**
@@ -266,8 +283,8 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    YB.onTrue(new ChangeSpeed(0.8));
-    XB.onTrue(new ChangeSpeed(0.6));
+    YB.onTrue(new ChangeSpeed(0.85));
+    XB.onTrue(new ChangeSpeed(0.67));
     AB.onTrue(new ChangeSpeed(0.45));
 
     BB.onTrue(new ToggleDirection());
@@ -275,8 +292,8 @@ public class RobotContainer {
     B5.onTrue(new ParallelCommandGroup(new ShooterControl(true), new BeltControl(true, false)));
     B5.onFalse(new ParallelCommandGroup(new ShooterControl(false), new BeltControl(false, false)));
 
-    RBB.onTrue(new ParallelCommandGroup(new IntakeMotorControl(true, true), new BeltControl(true, true)));
-    RBB.onFalse(new ParallelCommandGroup(new IntakeMotorControl(false, true), new BeltControl(false, true)));
+    RBB.onTrue(new ParallelCommandGroup(new IntakeMotorControl(true, false), new BeltControl(true, false)));
+    RBB.onFalse(new ParallelCommandGroup(new IntakeMotorControl(false, false), new BeltControl(false, false)));
 
     LBB.onTrue(new SolControl());
 
@@ -285,7 +302,7 @@ public class RobotContainer {
     B3.onTrue(new ShooterControl(1));
     B2.onTrue(new ShooterControl(2));
   
-    rightButton.onTrue(new AutoAlign());
+    rightButton.onTrue(new ChangeSpeed(1)); // TURBO MODE!!!
 
     // downbutton.onTrue(new SolControl(false));
     B7.onTrue(new ChangeLED());

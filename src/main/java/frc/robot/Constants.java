@@ -69,6 +69,7 @@ public final class Constants {
       
       public static final HashMap<String, Command> red3GPEventMap = new HashMap<>();
       public static final HashMap<String, Command> mid = new HashMap<>();
+      public static final HashMap<String, Command> midPick = new HashMap<>();
       public static final HashMap<String, Command> red3GPABEventMap = new HashMap<>();
       public static final HashMap<String, Command> red1GPEventMap = new HashMap<>();
       public static final HashMap<String, Command> red1GPABEventMap = new HashMap<>();
@@ -82,6 +83,6 @@ public final class Constants {
    public static final class Other {
       public static final int blinkInPWM = 0;
       public static final I2C.Port colorSensorPort = I2C.Port.kOnboard;
-      public static final double detectThreshold = 2;
+      public static final double colorDetectThreshold = 0.24;
    }
 }

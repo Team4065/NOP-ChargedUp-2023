@@ -40,7 +40,7 @@ public class MotorSys extends SubsystemBase {
             intakeMotor.setVoltage(0);
         }
       } else {
-        if (Belt.detectedColor.blue > Constants.Other.detectThreshold) {
+        if (Belt.detectedColor.blue > Constants.Other.colorDetectThreshold) {
           intakeMotor.setVoltage(0);
         } else {
           if (move == true) {

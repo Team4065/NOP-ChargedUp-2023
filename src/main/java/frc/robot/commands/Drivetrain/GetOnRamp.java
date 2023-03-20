@@ -11,10 +11,13 @@ import frc.robot.RobotContainer;
 public class GetOnRamp extends CommandBase {
   /** Creates a new getOnRamp. */
   boolean end;
+  double speed;
   float startTime, timePassed;
-  public GetOnRamp() {
+  boolean isBatterySide;
+  public GetOnRamp(boolean isBatterySide) {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(RobotContainer.m_drivetrain);
+    this.isBatterySide = isBatterySide;
     end = false;
   }
 
@@ -22,6 +25,7 @@ public class GetOnRamp extends CommandBase {
   @Override
   public void initialize() {
     System.out.println("started");
+    speed = (isBatterySide == true) ? 0.525 : -0.525;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -29,8 +33,9 @@ public class GetOnRamp extends CommandBase {
   public void execute() {
     System.out.println("RAMP");
     double pitch = Math.abs(RobotContainer.m_drivetrain.getPitch());
+
     if (pitch != Constants.AutoConstants.onRampGyro) {
-      RobotContainer.m_drivetrain.tankDrive(0.525, 0.525);
+      RobotContainer.m_drivetrain.tankDrive(speed, speed);
     }
 
     if (pitch < Constants.AutoConstants.onRampGyro + 1 && pitch > Constants.AutoConstants.onRampGyro - 1) {

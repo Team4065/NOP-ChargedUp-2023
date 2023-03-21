@@ -25,7 +25,6 @@ public class GetOnRamp extends CommandBase {
   @Override
   public void initialize() {
     System.out.println("started");
-    speed = (isBatterySide == true) ? 0.525 : -0.525;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -33,6 +32,12 @@ public class GetOnRamp extends CommandBase {
   public void execute() {
     System.out.println("RAMP");
     double pitch = Math.abs(RobotContainer.m_drivetrain.getPitch());
+
+    if (isBatterySide == true) {
+      speed = -0.525;
+    } else {
+      speed = 0.525;
+    }
 
     if (pitch != Constants.AutoConstants.onRampGyro) {
       RobotContainer.m_drivetrain.tankDrive(speed, speed);

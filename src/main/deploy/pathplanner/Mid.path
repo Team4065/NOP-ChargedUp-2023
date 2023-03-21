@@ -40,7 +40,9 @@
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
-        "names": [],
+        "names": [
+          "Stop"
+        ],
         "executionBehavior": "parallel",
         "waitBehavior": "none",
         "waitTime": 0
@@ -50,12 +52,5 @@
   "maxVelocity": 1.5,
   "maxAcceleration": 1.3,
   "isReversed": null,
-  "markers": [
-    {
-      "position": 1.0,
-      "names": [
-        "stopSys"
-      ]
-    }
-  ]
+  "markers": []
 }

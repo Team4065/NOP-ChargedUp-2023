@@ -162,7 +162,7 @@ public class RobotContainer {
     //   new AutoBalance()
     // );
 
-    Command balanceTestCmd = new AutoBalance(0.4, false);
+    Command balanceTestCmd = new SequentialCommandGroup(new GetOnRamp(false), new AutoBalance(0.39, false));
 
     m_chooser.addOption("Balance Test", balanceTestCmd);
     autoMap.put(balanceTestCmd, "test");
@@ -211,7 +211,8 @@ public class RobotContainer {
     Constants.AutoConstants.midPick.put("Start", new SequentialCommandGroup(
       new SequentialCommandGroup(new ShooterControl(true), new Time(100), new BeltControl(true, false)),
       new Time(800),
-      new ParallelCommandGroup(new ShooterControl(false), new BeltControl(false, false)),
+      new ParallelCommandGroup(new ShooterControl(false), new BeltControl(false, false))));
+    Constants.AutoConstants.midPick.put("startSys", new SequentialCommandGroup(
       new CustomSolControl(true),
       new ParallelCommandGroup(new BeltControl(true, false), new IntakeMotorControl(true, false))));
     Constants.AutoConstants.midPick.put("stopSys", new SequentialCommandGroup(
@@ -220,7 +221,10 @@ public class RobotContainer {
       new CustomSolControl(false)));
     Constants.AutoConstants.midPick.put("Stop", new SequentialCommandGroup(
       new GetOnRamp(true),
-      new AutoBalance(0.39, true)));
+      new AutoBalance(0.43, true),
+      new SequentialCommandGroup(new ShooterControl(true), new Time(100), new BeltControl(true, false)),
+      new Time(800),
+      new ParallelCommandGroup(new ShooterControl(false), new BeltControl(false, false))));
   }
 
   public void setRed3GPABMap() {

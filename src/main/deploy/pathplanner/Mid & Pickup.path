@@ -90,21 +90,29 @@
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
-        "names": [],
+        "names": [
+          "Stop"
+        ],
         "executionBehavior": "parallel",
         "waitBehavior": "none",
         "waitTime": 0
       }
     }
   ],
-  "maxVelocity": 1.5,
-  "maxAcceleration": 1.3,
+  "maxVelocity": 0.9,
+  "maxAcceleration": 0.8,
   "isReversed": null,
   "markers": [
     {
       "position": 2.0,
       "names": [
         "stopSys"
+      ]
+    },
+    {
+      "position": 0.8909090909089727,
+      "names": [
+        "startSys"
       ]
     }
   ]

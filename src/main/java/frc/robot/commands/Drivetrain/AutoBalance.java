@@ -41,22 +41,31 @@ public class AutoBalance extends CommandBase {
   @Override
   public void execute() {
     angle = RobotContainer.m_drivetrain.getPitch();
-    speed = pid.calculate(angle, Constants.AutoConstants.balancedGyro);
 
-    if (isBatterySide == true) {
-      speed *= -1;
-      speedBalance *= -1;
-    }
 
-    System.out.println("BALANCE: " + speed);
-
-    if (speed < -0.5) {
-      RobotContainer.m_drivetrain.tankDrive(speedBalance, speedBalance);
-    } else if (speed > 0.5) {
-      RobotContainer.m_drivetrain.tankDrive(-(speedBalance), -(speedBalance));
+    if (isBatterySide == false) {
+      speed = pid.calculate(angle, Constants.AutoConstants.balancedGyro);
+      if (speed < -0.5) {
+        RobotContainer.m_drivetrain.tankDrive(speedBalance, speedBalance);
+      } else if (speed > 0.5) {
+        RobotContainer.m_drivetrain.tankDrive(-(speedBalance), -(speedBalance));
+      } else {
+        RobotContainer.m_drivetrain.tankDrive(-speed, -speed);
+      }
+      System.out.println("Balance: " + speed);
     } else {
-      RobotContainer.m_drivetrain.tankDrive(-speed, -speed);
+      speed = pid.calculate(angle, -(Constants.AutoConstants.balancedGyro));
+      if (speed < -0.5) {
+        RobotContainer.m_drivetrain.tankDrive(speedBalance, speedBalance);
+      } else if (speed > 0.5) {
+        RobotContainer.m_drivetrain.tankDrive(-(speedBalance), -(speedBalance));
+      } else {
+        RobotContainer.m_drivetrain.tankDrive(-speed, -speed);
+      }
+      System.out.println("Balance: " + speed);
     }
+
+    
 
     if (angle > (Constants.AutoConstants.balancedGyro - Constants.AutoConstants.acceptableAngleRange) && angle < (Constants.AutoConstants.balancedGyro + Constants.AutoConstants.acceptableAngleRange)) {
       System.out.println("ANGLE REACHED");

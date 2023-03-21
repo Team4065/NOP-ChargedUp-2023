@@ -138,7 +138,7 @@ public class DriveTrain extends SubsystemBase {
     m_field.setRobotPose(getPose());
     isReversedValSB.setBoolean(isReversed);
     percentSpeedValSB.setString((speed * 100) + "%");
-    // pitchValSB.setDouble(g_gyro.getRoll());
+    pitchValSB.setDouble(g_gyro.getPitch());
 
     // System.out.println(getHeading());
   }
@@ -225,7 +225,7 @@ public class DriveTrain extends SubsystemBase {
 
   public double getPitch() {
     // We are getting the roll because the actual "pitch" is the roll because of the way navX is mounted
-    return g_gyro.getRoll();
+    return g_gyro.getPitch();
   }
 
   public double getTurnRate() {

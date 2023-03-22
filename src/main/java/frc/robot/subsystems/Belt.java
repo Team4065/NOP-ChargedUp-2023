@@ -63,8 +63,9 @@ public class Belt extends SubsystemBase {
     blueValSB.setDouble(detectedColor.blue);
     beltSpeedValSB.setString((BeltMotor.getMotorOutputPercent() * 100) + "%");
 
-    // System.out.println(detectedColor.blue);
+    // System.out.println("Blue: " + detectedColor.blue); <--- uncomment this line so you can see the blue value
 
+    // if the blue is higher than the colorDetectThreshold value, change the LEDs to purple meaning the cube is in. 
     if (detectedColor.blue > Constants.Other.colorDetectThreshold) {
       LEDs.gameObject = true;
     } else {

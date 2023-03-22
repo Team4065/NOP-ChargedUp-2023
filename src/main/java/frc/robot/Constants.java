@@ -83,6 +83,6 @@ public final class Constants {
    public static final class Other {
       public static final int blinkInPWM = 0;
       public static final I2C.Port colorSensorPort = I2C.Port.kOnboard;
-      public static final double colorDetectThreshold = 0.24;
+      public static final double colorDetectThreshold = 0.24; // change this value during color sensor calibration
    }
 }
